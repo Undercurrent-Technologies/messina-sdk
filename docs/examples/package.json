@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@algo-foundry/messina-sdk": "^0.1.1",
+    "algosdk": "^1.23.2",
+    "ethers": "^5.7.2"
+  }
+}
