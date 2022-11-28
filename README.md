@@ -28,7 +28,7 @@ npm install @algo-foundry/messina-sdk
 
 ## Code Flow
 
-![docs/code%20flow.png](docs/code_flow.png)
+![https://github.com/Algo-Foundry/messina-sdk/blob/master/docs/code_flow.png](docs/code_flow.png)
 
 ## Code Examples
 
