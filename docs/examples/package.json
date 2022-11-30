@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@algo-foundry/messina-sdk": "^0.1.2",
+    "@algo-foundry/messina-sdk": "^0.1.4",
     "algosdk": "^1.23.2",
     "ethers": "^5.7.2"
   }
