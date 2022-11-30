@@ -1,6 +1,6 @@
 {
   "name": "@algo-foundry/messina-sdk",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "The official SDK for Messina Bridge.",
   "homepage": "https://messina.one",
   "main": "./lib/cjs/index.js",
@@ -35,9 +35,8 @@
     "bridge",
     "token",
     "sdk",
-    "ethereum",
-    "terra",
-    "bsc"
+    "algorand",
+    "ethereum"
   ],
   "license": "Apache-2.0",
   "devDependencies": {
