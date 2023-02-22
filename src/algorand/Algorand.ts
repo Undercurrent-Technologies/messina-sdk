@@ -720,7 +720,7 @@ export async function _submitVAAAlgorand(
         client,
         senderAddr,
         tokenBridgeId,
-        parsedVAA.get("FromChain"),
+        BigInt(parsedVAA.get("FromChain")),
         parsedVAA.get("Contract") // Token Addresss from the foreign chain
       );
 
