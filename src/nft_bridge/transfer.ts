@@ -1,31 +1,27 @@
 import { ethers, Overrides } from "ethers";
-import {
-  NFTBridge__factory,
-  NFTImplementation__factory,
-} from "../ethers-contracts";
-import { ChainId, ChainName, coalesceChainId, createNonce } from "../utils";
+import { ChainId, ChainName, createNonce } from "../utils";
 
 export async function transferFromEth(
-  tokenBridgeAddress: string,
-  signer: ethers.Signer,
-  tokenAddress: string,
-  tokenID: ethers.BigNumberish,
-  recipientChain: ChainId | ChainName,
+  nftBridge: ethers.Contract,
+  nftAddr: string,
+  tokenIDs: ethers.BigNumberish[],
+  recipientChainId: ChainId | ChainName,
   recipientAddress: Uint8Array,
+  tokenAmounts: number[],
+  etherAmount: ethers.BigNumber,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ): Promise<ethers.ContractReceipt> {
-  const recipientChainId = coalesceChainId(recipientChain)
-  //TODO: should we check if token attestation exists on the target chain
-  const token = NFTImplementation__factory.connect(tokenAddress, signer);
-  await (await token.approve(tokenBridgeAddress, tokenID, overrides)).wait();
-  const bridge = NFTBridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.transferNFT(
-    tokenAddress,
-    tokenID,
+  const v = await nftBridge.transferNFT(
+    nftAddr,
+    tokenIDs,
     recipientChainId,
     recipientAddress,
     createNonce(),
-    overrides
+    tokenAmounts,
+    {
+      ...overrides,
+      value: etherAmount
+    }
   );
   const receipt = await v.wait();
   return receipt;

@@ -1047,7 +1047,7 @@ export async function updateBridgeFeeOnAlgorand(
   assetId: bigint,
   transferFee: bigint,
   redeemFee: bigint
-): Promise<Transaction[]> {
+): Promise<TransactionSignerPair[]> {
   const params: algosdk.SuggestedParams = await client
     .getTransactionParams()
     .do();
@@ -1071,7 +1071,7 @@ export async function updateBridgeFeeOnAlgorand(
     onComplete: OnApplicationComplete.NoOpOC,
     suggestedParams: params,
   })
-  txs.push(tx1)
+  txs.push({ tx: tx1, signer: null })
 
   const tx2 = makeApplicationCallTxnFromObject({
     accounts: [result.addr],
@@ -1082,10 +1082,7 @@ export async function updateBridgeFeeOnAlgorand(
     suggestedParams: params,
   })
 
-  txs.push(tx2)
-
-  algosdk.assignGroupID(txs)
-
+  txs.push({ tx: tx2, signer: null})
   return txs
 }
 
