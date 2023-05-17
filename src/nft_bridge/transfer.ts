@@ -1,5 +1,11 @@
 import { ethers, Overrides } from "ethers";
 import { ChainId, ChainName, createNonce } from "../utils";
+import {
+  NFT1155Implementation__factory,
+  NFTBridge__factory,
+  NFTImplementation__factory,
+} from "../ethers-contracts";
+import { getEmitterAddressEth } from "../bridge/getEmitterAddress";
 
 export async function transferFromEth(
   nftBridge: ethers.Contract,
@@ -25,4 +31,136 @@ export async function transferFromEth(
   );
   const receipt = await v.wait();
   return receipt;
+}
+
+export async function transferFromEthNFT(
+  nftBridgeAddress: string,
+  signer: ethers.Signer,
+  tokenAddress: string,
+  tokenIDs: ethers.BigNumberish[],
+  recipientChainId: ChainId | ChainName,
+  recipientAddress: Uint8Array,
+  tokenAmounts: number[],
+  etherAmount: ethers.BigNumber,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
+): Promise<ethers.ContractReceipt> {
+  const bridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
+  const v = await bridge.transferNFT(
+    tokenAddress,
+    tokenIDs,
+    recipientChainId,
+    recipientAddress,
+    createNonce(),
+    tokenAmounts,
+    {
+      ...overrides,
+      value: etherAmount
+    }
+  );
+  const receipt = await v.wait();
+  return receipt;
+}
+
+export async function approveEthNFT(
+  tokenBridgeAddress: string,
+  signer: ethers.Signer,
+  tokenAddress: string,
+  tokenID: ethers.BigNumberish,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
+): Promise<ethers.ContractReceipt> {
+  //TODO: should we check if token attestation exists on the target chain
+  const token = NFTImplementation__factory.connect(tokenAddress, signer);
+  const v = await token.approve(tokenBridgeAddress, tokenID, overrides);
+  const receipt = await v.wait();
+  return receipt;
+}
+
+export async function getApprovedEthNFT(
+  signer: ethers.Signer,
+  tokenAddress: string,
+  tokenID: ethers.BigNumberish,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
+): Promise<string> {
+  const token = NFTImplementation__factory.connect(tokenAddress, signer);
+  const approvedAddr = await token.getApproved(tokenID, overrides);
+
+  return approvedAddr;
+}
+
+export async function setApprovalForAllEthNFT(
+  tokenBridgeAddress: string,
+  signer: ethers.Signer,
+  tokenAddress: string,
+  isApproved: boolean,
+  NFTType: "ERC721" | "ERC1155",
+  overrides: Overrides & { from?: string | Promise<string> } = {}
+): Promise<ethers.ContractReceipt> {
+  //TODO: should we check if token attestation exists on the target chain
+  const token = NFTType === "ERC721" ? NFTImplementation__factory.connect(tokenAddress, signer) : NFT1155Implementation__factory.connect(tokenAddress, signer);
+  const v = await token.setApprovalForAll(tokenBridgeAddress, isApproved, overrides);
+  const receipt = await v.wait();
+  return receipt;
+}
+
+export async function getIsApprovedForAllEthNFT(
+  tokenBridgeAddress: string,
+  signer: ethers.Signer,
+  tokenAddress: string,
+  NFTType: "ERC721" | "ERC1155",
+  overrides: Overrides & { from?: string | Promise<string> } = {}
+): Promise<boolean> {
+  const signerAddr = await signer.getAddress();
+  const token = NFTType === "ERC721" ? NFTImplementation__factory.connect(tokenAddress, signer) : NFT1155Implementation__factory.connect(tokenAddress, signer);
+  const approved = await token.isApprovedForAll(signerAddr, tokenBridgeAddress, overrides);
+
+  return approved;
+}
+
+
+export const getWrappedAddrNFT = async (
+  nftBridgeAddress: string,
+  originChainIdHex: string,
+  originNFTAddr: string,
+  signer: ethers.Signer,
+): Promise<string> => {
+  const nftBridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
+
+  const originNFTAddrB32 = getEmitterAddressEth(originNFTAddr)
+  const wrappedAddr = await nftBridge.wrappedAsset(
+    originChainIdHex,
+    '0x' + originNFTAddrB32,
+  )
+
+  return wrappedAddr
+}
+
+export const getNFTBridgeFee = async (
+  nftBridgeAddress: string,
+  signer: ethers.Signer,
+): Promise<string> => {
+  const nftBridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
+
+  const fee = await nftBridge.getFee()
+
+  return fee.toString()
+}
+
+export const setInitArgs = async (
+  signer: ethers.Signer,
+  _standardId: number,
+  nftBridgeAddress: string,
+  selectorBytes: string,
+  createData: string
+): Promise<ethers.ContractReceipt> => {
+  const nftBridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
+  const signerAddr = await signer.getAddress()
+
+  const transaction = await nftBridge.setNFTInitArgs(_standardId, {
+    selectorBytes: selectorBytes,
+    ownerAddr: signerAddr,
+    data: createData,
+  })
+  let v = await transaction.wait()
+
+  return v
 }

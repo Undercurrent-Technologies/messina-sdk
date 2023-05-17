@@ -3,48 +3,144 @@ import { ChainId } from "./consts";
 
 export const METADATA_REPLACE = new RegExp("\u0000", "g");
 
-// TODO: remove `as ChainId` in next minor version as we can't ensure it will match our type definition
+export function readUInt96BE(buffer: Buffer, offset = 0): BigNumber {
+  // We read 96 bits, 12 bytes
+  const data = buffer.slice(offset, offset + 12);
+  // We construct a big number from this data
+  const num = BigNumber.from(data);
+  return num;
+}
 
 // note: actual first byte is message type
-//     0   [u8; 32] token_address
-//     32  u16      token_chain
-//     34  [u8; 32] symbol
-//     66  [u8; 32] name
-//     98  u256     tokenId
-//     130 u8       uri_len
-//     131 [u8;len] uri
-//     ?   [u8; 32] recipient
-//     ?   u16      recipient_chain
+//     0       [u8; 32] token address
+//     32      u16      token chain
+//     34      [u8; 32] symbol
+//     66      [u8; 32] name
+//     98      u256     tokenId
+//     100     u16      standardId
+//     101     u8       tokenTypeId 1 for 721, 2 for 1155
+//     103     u16      tokenIDs[] length
+//     xxx     u256[]   tokenIDs[]
+//     xxx+2   u16      amounts[] length
+//     yyy     u256[]   amounts[]
+//     yyy+32  [u8; 32] royaltyAddress
+//     prev+12 u96      royaltyBips
+//     prev+32 [u8; 32] rentAddress
+//     prev+32 u256     rentExpiryDate
+//     prev+2  u16      uri length
+//     prev+?? string   uri 
+//     prev+32 [u8; 32] toAddress
+//     prev+2   u16     toChain
+//     prev+2   u16     createData length
+//     prev+??  bytes   createData
+//     prev+2   u16     mintData length
+//     prev+??  bytes   mintData
+
 export const parseNFTPayload = (arr: Buffer) => {
-  const originAddress = arr.slice(1, 1 + 32).toString("hex");
-  const originChain = arr.readUInt16BE(33) as ChainId;
-  const symbol = Buffer.from(arr.slice(35, 35 + 32))
-    .toString("utf8")
-    .replace(METADATA_REPLACE, "");
-  const name = Buffer.from(arr.slice(67, 67 + 32))
-    .toString("utf8")
-    .replace(METADATA_REPLACE, "");
-  const tokenId = BigNumber.from(arr.slice(99, 99 + 32));
-  const uri_len = arr.readUInt8(131);
-  const uri = Buffer.from(arr.slice(132, 132 + uri_len))
-    .toString("utf8")
-    .replace(METADATA_REPLACE, "");
-  const target_offset = 132 + uri_len;
-  const targetAddress = arr
-    .slice(target_offset, target_offset + 32)
-    .toString("hex");
-  const targetChain = arr.readUInt16BE(target_offset + 32) as ChainId;
+  let index = 1;
+  const originAddress = arr.slice(index, index + 32).toString("hex");
+  index += 32;
+
+  const originChain = arr.readUInt16BE(index) as ChainId;
+  index += 2;
+
+  const symbol = Buffer.from(arr.slice(index, index + 32))
+    .toString('utf8')
+    .replace(METADATA_REPLACE, '')
+  index += 32
+
+  const name = Buffer.from(arr.slice(index, index + 32))
+    .toString('utf8')
+    .replace(METADATA_REPLACE, '')
+  index += 32
+
+  const tokenId = BigNumber.from(arr.slice(index, index + 32))
+  index += 32
+
+  const standardId = arr.readInt16BE(index)
+  index += 2
+
+  const tokenTypeId = arr.readInt8(index)
+  index += 1
+
+  const tokenIdsLen = arr.readInt16BE(index)
+  index += 2
+
+  const tokenIds: BigNumber[] = []
+  for (let i = 0; i < tokenIdsLen; i++) {
+    const tempTokenId = BigNumber.from(arr.slice(index, index + 32))
+    tokenIds.push(tempTokenId)
+    index += 32
+  }
+
+  const amountsLen = arr.readInt16BE(index)
+  index += 2
+
+  const amounts: BigNumber[] = []
+  for (let i = 0; i < amountsLen; i++) {
+    const tempAmount = BigNumber.from(arr.slice(index, index + 32))
+    amounts.push(tempAmount)
+    index += 32
+  }
+
+  const royaltyAddress = arr.slice(index, index + 32).toString('hex')
+  index += 32
+
+  const royaltyBips = readUInt96BE(arr, index)
+  index += 12
+
+  const rentAddress = arr.slice(index, index + 32).toString('hex')
+  index += 32
+
+  const rentExpiryDate = BigNumber.from(arr.slice(index, index + 32))
+  index += 32
+
+  const uri_len = arr.readInt16BE(index)
+  index += 2
+
+  const uri = Buffer.from(arr.slice(index, index + uri_len))
+    .toString('utf8')
+    .replace(METADATA_REPLACE, '')
+  index += uri_len
+
+  const toAddress = arr.slice(index, index + 32).toString('hex')
+  index += 32
+
+  const toChain = arr.readUInt16BE(index) as ChainId
+  index += 2
+
+  const createDataLen = arr.readInt16BE(index)
+  index += 2
+
+  const createData = arr.slice(index, index + createDataLen).toString('hex')
+  index += createDataLen
+
+  const mintDataLen = arr.readInt16BE(index)
+  index += 2
+
+  const mintData = arr.slice(index, index + mintDataLen).toString('hex')
+
   return {
     originAddress,
     originChain,
     symbol,
     name,
     tokenId,
+    standardId,
+    tokenTypeId,
+    tokenIds,
+    amounts,
+    royaltyAddress,
+    royaltyBips,
+    rentAddress,
+    rentExpiryDate,
     uri,
-    targetAddress,
-    targetChain,
-  };
-};
+    toAddress,
+    toChain,
+    createData,
+    mintData,
+  }
+}
 
 //     0   u256     amount
 //     32  [u8; 32] token_address

@@ -1,7 +1,7 @@
 import { ethers, Overrides } from "ethers";
 import { Bridge__factory } from "../ethers-contracts";
 
-export async function redeemOnEth(
+export async function redeemOnEthNFT(
   tokenBridgeAddress: string,
   signer: ethers.Signer,
   signedVAA: Uint8Array,
