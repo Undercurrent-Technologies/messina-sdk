@@ -121,7 +121,7 @@ export const getWrappedAddrNFT = async (
   nftBridgeAddress: string,
   originChainIdHex: string,
   originNFTAddr: string,
-  signer: ethers.Signer,
+  signer: ethers.Signer | ethers.providers.Provider,
 ): Promise<string> => {
   const nftBridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
 
@@ -136,7 +136,7 @@ export const getWrappedAddrNFT = async (
 
 export const getNFTBridgeFee = async (
   nftBridgeAddress: string,
-  signer: ethers.Signer,
+  signer: ethers.Signer | ethers.providers.Provider,
 ): Promise<string> => {
   const nftBridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
 
