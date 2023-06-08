@@ -230,7 +230,7 @@ export async function transferFromAlgorand(
   txs.push({ tx: t, signer: null });
 
   let accounts: string[] = [];
-  let treasury = await getTreasuryAddress(client, bridgeId);
+  let treasury = await getTreasuryAddress(client, tokenBridgeId);
 
   // Get escrow address
   const escrowId = await getEscrowId(client, tokenBridgeId, assetId);
