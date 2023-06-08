@@ -3,6 +3,7 @@ import {
   attestToAlgorand,
 } from ".";
 import { Bridge__factory } from "../ethers-contracts";
+import { bigIntZero } from "../utils";
 
 export async function updateAttestToEth(
   tokenBridgeAddress: string,
@@ -14,10 +15,16 @@ export async function updateAttestToEth(
   transferFee: ethers.BigNumberish,
   redeemFee: ethers.BigNumberish,
   escrow: string,
+  network: string,
+  sourceFee?: boolean,
+  destinationFee?: boolean,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.updateWrapped(signedVAA, tokenAddress, { min: minAmount, max: maxAmount, transferFee: transferFee, redeemFee: redeemFee, Escrow: escrow }, overrides);
+
+  const finalSourceFee = (typeof sourceFee !== 'undefined') ? sourceFee : ethers.BigNumber.from(transferFee).gt(bigIntZero);
+  const finalDestinationFee = (typeof destinationFee !== 'undefined') ? destinationFee : ethers.BigNumber.from(redeemFee).gt(bigIntZero);
+  const v = await bridge.updateAttested(signedVAA, tokenAddress, { min: minAmount, max: maxAmount, transferFee: transferFee, redeemFee: redeemFee, Escrow: escrow, src: finalSourceFee, dest: finalDestinationFee }, network, overrides);
   const receipt = await v.wait();
   return receipt;
 }

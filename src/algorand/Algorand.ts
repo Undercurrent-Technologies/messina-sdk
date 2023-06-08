@@ -670,6 +670,8 @@ export async function _submitVAAAlgorand(
   transferFee?: bigint,
   redeemFee?: bigint,
   escrowId?: bigint,
+  src?: boolean,
+  dest?: boolean,
 ): Promise<TransactionSignerPair[]> {
   let sstate = await submitVAAHeader(
     client,
@@ -878,7 +880,18 @@ export async function _submitVAAAlgorand(
     txs.push({
       tx: makeApplicationCallTxnFromObject({
         accounts: accts,
-        appArgs: [textToUint8Array("receiveAttest"), vaa, algosdk.encodeUint64(assetId), algosdk.encodeUint64(minToken ?? 0), algosdk.encodeUint64(maxToken ?? 0), algosdk.encodeUint64(transferFee ?? 0), algosdk.encodeUint64(redeemFee ?? 0), algosdk.encodeUint64(escrowId ?? 0)],
+        appArgs: [
+          textToUint8Array("receiveAttest"),
+          vaa,
+          algosdk.encodeUint64(assetId),
+          algosdk.encodeUint64(minToken ?? 0),
+          algosdk.encodeUint64(maxToken ?? 0),
+          algosdk.encodeUint64(transferFee ?? 0),
+          algosdk.encodeUint64(redeemFee ?? 0),
+          algosdk.encodeUint64(escrowId ?? 0),
+          algosdk.encodeUint64(BigInt(src ?? true)),
+          algosdk.encodeUint64(BigInt(dest ?? false)),
+        ],
         appIndex: safeBigIntToNumber(tokenBridgeId),
         foreignAssets: foreignAssets,
         from: senderAddr,
@@ -1040,13 +1053,17 @@ export async function _submitVAAAlgorand(
  * @param redeemFee Fee when user do the redeem, zero means no fee
  * @returns 
  */
-export async function updateBridgeFeeOnAlgorand(
+export async function updateTokenConfigOnAlgorand(
   client: Algodv2,
   tokenBridgeId: bigint,
   senderAddr: string,
   assetId: bigint,
   transferFee: bigint,
-  redeemFee: bigint
+  redeemFee: bigint,
+  minToken: bigint,
+  maxToken: bigint,
+  src: boolean,
+  dest: boolean,
 ): Promise<TransactionSignerPair[]> {
   const params: algosdk.SuggestedParams = await client
     .getTransactionParams()
@@ -1075,14 +1092,23 @@ export async function updateBridgeFeeOnAlgorand(
 
   const tx2 = makeApplicationCallTxnFromObject({
     accounts: [result.addr],
-    appArgs: [textToUint8Array("updateBridgeFee"), algosdk.encodeUint64(assetId), algosdk.encodeUint64(transferFee), algosdk.encodeUint64(redeemFee)],
+    appArgs: [
+      textToUint8Array("updateTokenConfig"),
+      algosdk.encodeUint64(assetId),
+      algosdk.encodeUint64(transferFee),
+      algosdk.encodeUint64(redeemFee),
+      algosdk.encodeUint64(minToken),
+      algosdk.encodeUint64(maxToken),
+      algosdk.encodeUint64(BigInt(src)),
+      algosdk.encodeUint64(BigInt(dest)),
+    ],
     appIndex: safeBigIntToNumber(tokenBridgeId),
     from: senderAddr,
     onComplete: OnApplicationComplete.NoOpOC,
     suggestedParams: params,
   })
 
-  txs.push({ tx: tx2, signer: null})
+  txs.push({ tx: tx2, signer: null })
   return txs
 }
 
@@ -1294,56 +1320,6 @@ export async function escrowDeposit(
 
   return txs
 
-}
-
-
-export async function updateTokenLimitOnAlgorand(
-  client: Algodv2,
-  tokenBridgeId: bigint,
-  senderAddr: string,
-  assetId: bigint,
-  minToken: bigint,
-  maxToken: bigint
-): Promise<Transaction[]> {
-  const params: algosdk.SuggestedParams = await client
-    .getTransactionParams()
-    .do();
-
-  // "TokenBridge native chainAddr"
-  const result = await optin(
-    client,
-    senderAddr,
-    tokenBridgeId,
-    assetId,
-    textToHexString("native")
-  );
-
-  let txs = []
-  let buf: Uint8Array = new Uint8Array(1);
-  buf[0] = 0x01;
-  const tx1 = makeApplicationCallTxnFromObject({
-    appArgs: [textToUint8Array("nop"), buf],
-    appIndex: safeBigIntToNumber(tokenBridgeId),
-    from: senderAddr,
-    onComplete: OnApplicationComplete.NoOpOC,
-    suggestedParams: params,
-  })
-  txs.push(tx1)
-
-  const tx2 = makeApplicationCallTxnFromObject({
-    accounts: [result.addr],
-    appArgs: [textToUint8Array("updateMaxToken"), algosdk.encodeUint64(assetId), algosdk.encodeUint64(minToken), algosdk.encodeUint64(maxToken)],
-    appIndex: safeBigIntToNumber(tokenBridgeId),
-    from: senderAddr,
-    onComplete: OnApplicationComplete.NoOpOC,
-    suggestedParams: params,
-  })
-
-  txs.push(tx2)
-
-  algosdk.assignGroupID(txs)
-
-  return txs
 }
 
 export function uint8ArrayToNativeStringAlgorand(a: Uint8Array): string {

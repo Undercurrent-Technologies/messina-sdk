@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 export function safeBigIntToNumber(b: bigint): number {
   if (
     b < BigInt(Number.MIN_SAFE_INTEGER) ||
@@ -7,3 +9,5 @@ export function safeBigIntToNumber(b: bigint): number {
   }
   return Number(b);
 }
+
+export const bigIntZero = ethers.BigNumber.from(0);

@@ -12,7 +12,7 @@ import { ethers, PayableOverrides } from "ethers";
 import { getMessageFee, optin, TransactionSignerPair } from "../algorand";
 import { Bridge__factory } from "../ethers-contracts";
 import { textToHexString, textToUint8Array, uint8ArrayToHex } from "../utils";
-import { safeBigIntToNumber } from "../utils/bigint";
+import { bigIntZero, safeBigIntToNumber } from "../utils/bigint";
 import { createNonce } from "../utils/createNonce";
 
 export async function attestFromEth(
@@ -24,10 +24,15 @@ export async function attestFromEth(
   transferFee: ethers.BigNumberish,
   redeemFee: ethers.BigNumberish,
   escrow: string,
+  network: string,
+  sourceFee?: boolean,
+  destinationFee?: boolean,
   overrides: PayableOverrides & { from?: string | Promise<string> } = {}
 ): Promise<ethers.ContractReceipt> {
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.attestToken(tokenAddress, createNonce(), { min: minAmount, max: maxAmount, transferFee: transferFee, redeemFee: redeemFee, Escrow: escrow }, overrides);
+  const finalSourceFee = (typeof sourceFee !== 'undefined') ? sourceFee : ethers.BigNumber.from(transferFee).gt(bigIntZero);
+  const finalDestinationFee = (typeof destinationFee !== 'undefined') ? destinationFee : ethers.BigNumber.from(redeemFee).gt(bigIntZero);
+  const v = await bridge.attestToken(tokenAddress, createNonce(), { min: minAmount, max: maxAmount, transferFee: transferFee, redeemFee: redeemFee, Escrow: escrow, src: finalSourceFee, dest: finalDestinationFee }, network, overrides);
   const receipt = await v.wait();
   return receipt;
 }
@@ -58,6 +63,8 @@ export async function attestFromAlgorand(
   maxToken: bigint,
   transferFee: bigint,
   redeemFee: bigint,
+  src: boolean,
+  dest: boolean,
 ): Promise<TransactionSignerPair[]> {
   const tbAddr: string = getApplicationAddress(tokenBridgeId);
   const decTbAddr: Uint8Array = decodeAddress(tbAddr).publicKey;
@@ -144,7 +151,17 @@ export async function attestFromAlgorand(
   }
 
   let appTxn = makeApplicationCallTxnFromObject({
-    appArgs: [bPgmName, bigIntToBytes(assetId, 8), algosdk.encodeUint64(minToken), algosdk.encodeUint64(maxToken), algosdk.encodeUint64(transferFee), algosdk.encodeUint64(redeemFee), algosdk.encodeUint64(escrowId)],
+    appArgs: [
+      bPgmName,
+      bigIntToBytes(assetId, 8),
+      algosdk.encodeUint64(minToken),
+      algosdk.encodeUint64(maxToken),
+      algosdk.encodeUint64(transferFee),
+      algosdk.encodeUint64(redeemFee),
+      algosdk.encodeUint64(escrowId),
+      algosdk.encodeUint64(BigInt(src)),
+      algosdk.encodeUint64(BigInt(dest)),
+    ],
     accounts: accts,
     appIndex: safeBigIntToNumber(tokenBridgeId),
     foreignApps: [safeBigIntToNumber(bridgeId)],
