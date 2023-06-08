@@ -99,15 +99,15 @@ export async function getMessageFee(
 /**
  * Return the treasury address for the core bridge
  * @param client An Algodv2 client
- * @param bridgeId The application ID of the core bridge
+ * @param tokenBridgeId Application ID of the token bridge
  * @returns The message fee for the core bridge
  */
 export async function getTreasuryAddress(
   client: Algodv2,
-  bridgeId: bigint
+  tokenBridgeId: bigint
 ): Promise<any> {
   const applInfo: Record<string, any> = await client
-    .getApplicationByID(safeBigIntToNumber(bridgeId))
+    .getApplicationByID(safeBigIntToNumber(tokenBridgeId))
     .do();
   const globalState = applInfo["params"]["global-state"];
   const key: string = Buffer.from("Treasury", "binary").toString("base64");
@@ -957,7 +957,7 @@ export async function _submitVAAAlgorand(
     // get the escrow
     const escrowId = await getEscrowId(client, tokenBridgeId, asaID);
 
-    let treasury = await getTreasuryAddress(client, bridgeId);
+    let treasury = await getTreasuryAddress(client, tokenBridgeId);
     // Accounts
     // 1. Emitter
     // 2. Treasury
