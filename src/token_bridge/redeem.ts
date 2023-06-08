@@ -7,25 +7,26 @@ export async function redeemOnEth(
   tokenBridgeAddress: string,
   signer: ethers.Signer,
   signedVAA: Uint8Array,
+  network: string,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.completeTransfer(signedVAA, overrides);
+  const v = await bridge.completeTransfer(signedVAA, network, overrides);
   const receipt = await v.wait();
   return receipt;
 }
 
-export async function redeemOnEthNative(
-  tokenBridgeAddress: string,
-  signer: ethers.Signer,
-  signedVAA: Uint8Array,
-  overrides: Overrides & { from?: string | Promise<string> } = {}
-) {
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.completeTransferAndUnwrapETH(signedVAA, overrides);
-  const receipt = await v.wait();
-  return receipt;
-}
+// export async function redeemOnEthNative(
+//   tokenBridgeAddress: string,
+//   signer: ethers.Signer,
+//   signedVAA: Uint8Array,
+//   overrides: Overrides & { from?: string | Promise<string> } = {}
+// ) {
+//   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+//   const v = await bridge.completeTransferAndUnwrapETH(signedVAA, overrides);
+//   const receipt = await v.wait();
+//   return receipt;
+// }
 
 /**
  * This basically just submits the VAA to Algorand

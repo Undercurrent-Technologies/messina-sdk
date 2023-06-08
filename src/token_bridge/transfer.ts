@@ -66,6 +66,7 @@ export async function transferFromEth(
   amount: ethers.BigNumberish,
   recipientChain: ChainId | ChainName,
   recipientAddress: Uint8Array,
+  network: string,
   relayerFee: ethers.BigNumberish = 0,
   overrides: PayableOverrides & { from?: string | Promise<string> } = {}
 ) {
@@ -78,7 +79,8 @@ export async function transferFromEth(
     recipientAddress,
     relayerFee,
     createNonce(),
-    overrides
+    network,
+    overrides,
   );
   const receipt = await v.wait();
   return receipt;
@@ -90,8 +92,9 @@ export async function transferFromEthNative(
   amount: ethers.BigNumberish,
   recipientChain: ChainId | ChainId,
   recipientAddress: Uint8Array,
+  network: string,
   relayerFee: ethers.BigNumberish = 0,
-  overrides: PayableOverrides & { from?: string | Promise<string> } = {}
+  overrides: PayableOverrides & { from?: string | Promise<string> } = {},
 ) {
   const recipientChainId = coalesceChainId(recipientChain);
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
@@ -100,6 +103,7 @@ export async function transferFromEthNative(
     recipientAddress,
     relayerFee,
     createNonce(),
+    network, //string
     {
       ...overrides,
       value: amount,
@@ -278,5 +282,18 @@ export async function transferFromAlgorand(
   });
   acTxn.fee *= 5;
   txs.push({ tx: acTxn, signer: null });
+  // reserve more opcode costs
+  let buf = new Uint8Array(1);
+  buf[0] = 0x03;
+  txs.push({
+    tx: makeApplicationCallTxnFromObject({
+      appArgs: [textToUint8Array("nop"), buf],
+      appIndex: safeBigIntToNumber(tokenBridgeId),
+      from: senderAddr,
+      onComplete: OnApplicationComplete.NoOpOC,
+      suggestedParams: params,
+    }),
+    signer: null,
+  });
   return txs;
 }

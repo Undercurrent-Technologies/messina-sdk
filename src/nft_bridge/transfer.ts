@@ -15,6 +15,7 @@ export async function transferFromEth(
   recipientAddress: Uint8Array,
   tokenAmounts: number[],
   etherAmount: ethers.BigNumber,
+  network: string,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ): Promise<ethers.ContractReceipt> {
   const v = await nftBridge.transferNFT(
@@ -24,10 +25,11 @@ export async function transferFromEth(
     recipientAddress,
     createNonce(),
     tokenAmounts,
+    network,
     {
       ...overrides,
       value: etherAmount
-    }
+    },
   );
   const receipt = await v.wait();
   return receipt;
@@ -42,6 +44,7 @@ export async function transferFromEthNFT(
   recipientAddress: Uint8Array,
   tokenAmounts: number[],
   etherAmount: ethers.BigNumber,
+  network: string,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ): Promise<ethers.ContractReceipt> {
   const bridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
@@ -52,10 +55,11 @@ export async function transferFromEthNFT(
     recipientAddress,
     createNonce(),
     tokenAmounts,
+    network,
     {
       ...overrides,
       value: etherAmount
-    }
+    },
   );
   const receipt = await v.wait();
   return receipt;
