@@ -161,7 +161,6 @@ export const setInitArgs = async (
 
   const transaction = await nftBridge.setNFTInitArgs(_standardId, {
     selectorBytes: selectorBytes,
-    ownerAddr: signerAddr,
     data: createData,
   })
   let v = await transaction.wait()

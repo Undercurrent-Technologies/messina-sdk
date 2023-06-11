@@ -60,6 +60,9 @@ export const parseNFTPayload = (arr: Buffer) => {
   const standardId = arr.readInt16BE(index)
   index += 2
 
+  const collectionOwner = arr.slice(index, index + 32).toString('hex')
+  index += 32
+
   const tokenTypeId = arr.readInt8(index)
   index += 1
 
@@ -127,6 +130,7 @@ export const parseNFTPayload = (arr: Buffer) => {
     name,
     tokenId,
     standardId,
+    collectionOwner,
     tokenTypeId,
     tokenIds,
     amounts,
