@@ -75,7 +75,7 @@ export const tryUint8ArrayToNative = (
     throw Error("uint8ArrayToNative: Chain id unset");
   } else {
     // This case is never reached
-    const _: never = chainId;
+    const _: number = chainId;
     throw Error("Don't know how to convert address for chain " + chainId);
   }
 };
@@ -181,7 +181,7 @@ export const tryNativeToHexString = (
     throw Error("hexToNativeString: Chain id unset");
   } else {
     // If this case is reached
-    const _: never = chainId;
+    const _: number = chainId;
     throw Error("Don't know how to convert address from chain " + chainId);
   }
 };
