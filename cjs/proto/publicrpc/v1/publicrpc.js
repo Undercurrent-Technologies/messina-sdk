@@ -48,11 +48,25 @@ var ChainID;
     ChainID[ChainID["CHAIN_ID_FANTOM"] = 10] = "CHAIN_ID_FANTOM";
     ChainID[ChainID["CHAIN_ID_KARURA"] = 11] = "CHAIN_ID_KARURA";
     ChainID[ChainID["CHAIN_ID_ACALA"] = 12] = "CHAIN_ID_ACALA";
-    /**
-     * CHAIN_ID_ETHEREUM_ROPSTEN - Special case - Eth has two testnets. CHAIN_ID_ETHEREUM is Goerli,
-     * but we also want to connect to Ropsten, so we add a separate chain.
-     */
-    ChainID[ChainID["CHAIN_ID_ETHEREUM_ROPSTEN"] = 10001] = "CHAIN_ID_ETHEREUM_ROPSTEN";
+    ChainID[ChainID["CHAIN_ID_KLAYTN"] = 13] = "CHAIN_ID_KLAYTN";
+    ChainID[ChainID["CHAIN_ID_CELO"] = 14] = "CHAIN_ID_CELO";
+    ChainID[ChainID["CHAIN_ID_NEAR"] = 15] = "CHAIN_ID_NEAR";
+    ChainID[ChainID["CHAIN_ID_MOONBEAM"] = 16] = "CHAIN_ID_MOONBEAM";
+    ChainID[ChainID["CHAIN_ID_NEON"] = 17] = "CHAIN_ID_NEON";
+    ChainID[ChainID["CHAIN_ID_TERRA2"] = 18] = "CHAIN_ID_TERRA2";
+    ChainID[ChainID["CHAIN_ID_INJECTIVE"] = 19] = "CHAIN_ID_INJECTIVE";
+    ChainID[ChainID["CHAIN_ID_OSMOSIS"] = 20] = "CHAIN_ID_OSMOSIS";
+    ChainID[ChainID["CHAIN_ID_SUI"] = 21] = "CHAIN_ID_SUI";
+    ChainID[ChainID["CHAIN_ID_APTOS"] = 22] = "CHAIN_ID_APTOS";
+    ChainID[ChainID["CHAIN_ID_ARBITRUM"] = 23] = "CHAIN_ID_ARBITRUM";
+    ChainID[ChainID["CHAIN_ID_OPTIMISM"] = 24] = "CHAIN_ID_OPTIMISM";
+    ChainID[ChainID["CHAIN_ID_GNOSIS"] = 25] = "CHAIN_ID_GNOSIS";
+    ChainID[ChainID["CHAIN_ID_PYTHNET"] = 26] = "CHAIN_ID_PYTHNET";
+    ChainID[ChainID["CHAIN_ID_XPLA"] = 28] = "CHAIN_ID_XPLA";
+    ChainID[ChainID["CHAIN_ID_BTC"] = 29] = "CHAIN_ID_BTC";
+    ChainID[ChainID["CHAIN_ID_BASE"] = 30] = "CHAIN_ID_BASE";
+    ChainID[ChainID["CHAIN_ID_SEI"] = 32] = "CHAIN_ID_SEI";
+    ChainID[ChainID["CHAIN_ID_SEPOLIA"] = 10002] = "CHAIN_ID_SEPOLIA";
     ChainID[ChainID["CHAIN_ID_CRONOS"] = 20025] = "CHAIN_ID_CRONOS";
     ChainID[ChainID["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(ChainID = exports.ChainID || (exports.ChainID = {}));
@@ -97,9 +111,63 @@ function chainIDFromJSON(object) {
         case 12:
         case "CHAIN_ID_ACALA":
             return ChainID.CHAIN_ID_ACALA;
-        case 10001:
-        case "CHAIN_ID_ETHEREUM_ROPSTEN":
-            return ChainID.CHAIN_ID_ETHEREUM_ROPSTEN;
+        case 13:
+        case "CHAIN_ID_KLAYTN":
+            return ChainID.CHAIN_ID_KLAYTN;
+        case 14:
+        case "CHAIN_ID_CELO":
+            return ChainID.CHAIN_ID_CELO;
+        case 15:
+        case "CHAIN_ID_NEAR":
+            return ChainID.CHAIN_ID_NEAR;
+        case 16:
+        case "CHAIN_ID_MOONBEAM":
+            return ChainID.CHAIN_ID_MOONBEAM;
+        case 17:
+        case "CHAIN_ID_NEON":
+            return ChainID.CHAIN_ID_NEON;
+        case 18:
+        case "CHAIN_ID_TERRA2":
+            return ChainID.CHAIN_ID_TERRA2;
+        case 19:
+        case "CHAIN_ID_INJECTIVE":
+            return ChainID.CHAIN_ID_INJECTIVE;
+        case 20:
+        case "CHAIN_ID_OSMOSIS":
+            return ChainID.CHAIN_ID_OSMOSIS;
+        case 21:
+        case "CHAIN_ID_SUI":
+            return ChainID.CHAIN_ID_SUI;
+        case 22:
+        case "CHAIN_ID_APTOS":
+            return ChainID.CHAIN_ID_APTOS;
+        case 23:
+        case "CHAIN_ID_ARBITRUM":
+            return ChainID.CHAIN_ID_ARBITRUM;
+        case 24:
+        case "CHAIN_ID_OPTIMISM":
+            return ChainID.CHAIN_ID_OPTIMISM;
+        case 25:
+        case "CHAIN_ID_GNOSIS":
+            return ChainID.CHAIN_ID_GNOSIS;
+        case 26:
+        case "CHAIN_ID_PYTHNET":
+            return ChainID.CHAIN_ID_PYTHNET;
+        case 28:
+        case "CHAIN_ID_XPLA":
+            return ChainID.CHAIN_ID_XPLA;
+        case 29:
+        case "CHAIN_ID_BTC":
+            return ChainID.CHAIN_ID_BTC;
+        case 30:
+        case "CHAIN_ID_BASE":
+            return ChainID.CHAIN_ID_BASE;
+        case 32:
+        case "CHAIN_ID_SEI":
+            return ChainID.CHAIN_ID_SEI;
+        case 10002:
+        case "CHAIN_ID_SEPOLIA":
+            return ChainID.CHAIN_ID_SEPOLIA;
         case 20025:
         case "CHAIN_ID_CRONOS":
             return ChainID.CHAIN_ID_CRONOS;
@@ -138,10 +206,46 @@ function chainIDToJSON(object) {
             return "CHAIN_ID_KARURA";
         case ChainID.CHAIN_ID_ACALA:
             return "CHAIN_ID_ACALA";
-        case ChainID.CHAIN_ID_ETHEREUM_ROPSTEN:
-            return "CHAIN_ID_ETHEREUM_ROPSTEN";
+        case ChainID.CHAIN_ID_KLAYTN:
+            return "CHAIN_ID_KLAYTN";
+        case ChainID.CHAIN_ID_CELO:
+            return "CHAIN_ID_CELO";
+        case ChainID.CHAIN_ID_NEAR:
+            return "CHAIN_ID_NEAR";
+        case ChainID.CHAIN_ID_MOONBEAM:
+            return "CHAIN_ID_MOONBEAM";
+        case ChainID.CHAIN_ID_NEON:
+            return "CHAIN_ID_NEON";
+        case ChainID.CHAIN_ID_TERRA2:
+            return "CHAIN_ID_TERRA2";
+        case ChainID.CHAIN_ID_INJECTIVE:
+            return "CHAIN_ID_INJECTIVE";
+        case ChainID.CHAIN_ID_OSMOSIS:
+            return "CHAIN_ID_OSMOSIS";
+        case ChainID.CHAIN_ID_SUI:
+            return "CHAIN_ID_SUI";
+        case ChainID.CHAIN_ID_APTOS:
+            return "CHAIN_ID_APTOS";
+        case ChainID.CHAIN_ID_ARBITRUM:
+            return "CHAIN_ID_ARBITRUM";
+        case ChainID.CHAIN_ID_OPTIMISM:
+            return "CHAIN_ID_OPTIMISM";
+        case ChainID.CHAIN_ID_GNOSIS:
+            return "CHAIN_ID_GNOSIS";
+        case ChainID.CHAIN_ID_PYTHNET:
+            return "CHAIN_ID_PYTHNET";
+        case ChainID.CHAIN_ID_XPLA:
+            return "CHAIN_ID_XPLA";
+        case ChainID.CHAIN_ID_BTC:
+            return "CHAIN_ID_BTC";
+        case ChainID.CHAIN_ID_BASE:
+            return "CHAIN_ID_BASE";
+        case ChainID.CHAIN_ID_SEI:
+            return "CHAIN_ID_SEI";
+        case ChainID.CHAIN_ID_SEPOLIA:
+            return "CHAIN_ID_SEPOLIA";
         case ChainID.CHAIN_ID_CRONOS:
-            return "CHAIN_ID_CRONOS";
+            return "CHAIN_ID_CRONOS";    
         default:
             return "UNKNOWN";
     }
