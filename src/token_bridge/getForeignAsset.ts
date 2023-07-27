@@ -1,4 +1,4 @@
-import { LCDClient } from "@terra-money/terra.js";
+// import { LCDClient } from "@terra-money/terra.js";
 import { Algodv2 } from "algosdk";
 import { ethers } from "ethers";
 import { fromUint8Array } from "js-base64";
@@ -42,7 +42,7 @@ export async function getForeignAssetEth(
 
 export async function getForeignAssetTerra(
   tokenBridgeAddress: string,
-  client: LCDClient,
+  client: any,
   originChain: ChainId | ChainName,
   originAsset: Uint8Array
 ): Promise<string | null> {

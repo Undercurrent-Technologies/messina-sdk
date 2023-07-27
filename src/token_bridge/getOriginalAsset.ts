@@ -1,4 +1,4 @@
-import { LCDClient } from "@terra-money/terra.js";
+// import { LCDClient } from "@terra-money/terra.js";
 import { Algodv2 } from "algosdk";
 import { ethers } from "ethers";
 import { arrayify, zeroPad } from "ethers/lib/utils";
@@ -65,7 +65,7 @@ export async function getOriginalAssetEth(
 }
 
 export async function getOriginalAssetTerra(
-  client: LCDClient,
+  client: any,
   wrappedAddress: string
 ): Promise<WormholeWrappedInfo> {
   if (isNativeDenom(wrappedAddress)) {
