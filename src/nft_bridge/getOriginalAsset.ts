@@ -1,4 +1,4 @@
-import { LCDClient } from "@terra-money/terra.js";
+// import { LCDClient } from "@terra-money/terra.js";
 import { ethers } from "ethers";
 import { arrayify, zeroPad } from "ethers/lib/utils";
 import { canonicalAddress, WormholeWrappedInfo } from "..";
@@ -61,7 +61,7 @@ export async function getOriginalAssetEth(
 }
 
 export async function getOriginalAssetTerra(
-  client: LCDClient,
+  client: any,
   wrappedAddress: string
 ): Promise<WormholeWrappedInfo> {
   try {

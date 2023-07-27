@@ -1,6 +1,6 @@
 {
   "name": "@algo-foundry/messina-sdk",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "The official SDK for Messina Bridge.",
   "homepage": "https://messina.one",
   "main": "./lib/cjs/index.js",
@@ -61,16 +61,15 @@
   "dependencies": {
     "@certusone/wormhole-sdk-wasm": "^0.0.1",
     "@grpc/grpc-js": "^1.5.10",
-    "@grpc/proto-loader": "^0.6.9",
+    "@grpc/proto-loader": "^0.7.8",
     "@improbable-eng/grpc-web": "^0.14.0",
-    "@terra-money/terra.js": "^3.0.7",
     "@typechain/ethers-v5": "^10.0.0",
     "algosdk": "^1.18.1",
-    "axios": "^0.24.0",
+    "axios": "^1.4.0",
     "bech32": "^2.0.0",
     "dotenv": "^16.0.1",
     "js-base64": "^3.6.1",
-    "protobufjs": "^6.11.2",
+    "protobufjs": "^7.2.4",    
     "rxjs": "^7.3.0",
     "typechain": "^8.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.3.0"

@@ -1,4 +1,4 @@
-import { TxInfo } from "@terra-money/terra.js";
+// import { TxInfo } from "@terra-money/terra.js";
 import algosdk from "algosdk";
 import { BigNumber, ContractReceipt } from "ethers";
 import { Implementation__factory } from "../ethers-contracts";
@@ -33,7 +33,7 @@ export function parseSequencesFromLogEth(
   });
 }
 
-export function parseSequenceFromLogTerra(info: TxInfo): string {
+export function parseSequenceFromLogTerra(info: any): string {
   // Scan for the Sequence attribute in all the outputs of the transaction.
   // TODO: Make this not horrible.
   let sequence = "";
@@ -50,7 +50,7 @@ export function parseSequenceFromLogTerra(info: TxInfo): string {
   return sequence.toString();
 }
 
-export function parseSequencesFromLogTerra(info: TxInfo): string[] {
+export function parseSequencesFromLogTerra(info: any): string[] {
   // Scan for the Sequence attribute in all the outputs of the transaction.
   // TODO: Make this not horrible.
   const sequences: string[] = [];
