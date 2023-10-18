@@ -39,7 +39,7 @@ const BITS_PER_BYTE: number = 8;
 export const BITS_PER_KEY: number = MAX_BYTES_PER_KEY * BITS_PER_BYTE;
 const MAX_BYTES: number = MAX_BYTES_PER_KEY * MAX_KEYS;
 export const MAX_BITS: number = BITS_PER_BYTE * MAX_BYTES;
-const MAX_SIGS_PER_TXN: number = 9;
+const MAX_SIGS_PER_TXN: number = 6;
 
 const ALGO_VERIFY_HASH =
   "EZATROXX2HISIRZDRGXW4LRQ46Z6IUJYYIHU3PJGP7P5IQDPKVX42N767A";
@@ -578,15 +578,21 @@ export async function submitVAAHeader(
     .do();
 
   // We don't pass the entire payload in but instead just pass it pre digested.  This gets around size
-  // limitations with lsigs AND reduces the cost of the entire operation on a conjested network by reducing the
+  // limitations with lsigs AND reduces the cost of the entire operation on a congested network by reducing the
   // bytes passed into the transaction
   // This is a 2 pass digest
   const digest = keccak256(keccak256(parsedVAA.get("digest"))).slice(2);
 
-  // How many signatures can we process in a single txn... we can do 9!
+  // How many signatures can we process in a single txn... we can do 6!
   // There are likely upwards of 19 signatures.  So, we ned to split things up
   const numSigs: number = parsedVAA.get("siglen");
-  let numTxns: number = Math.floor(numSigs / MAX_SIGS_PER_TXN) + 1;
+
+  let numTxns: number = 0;
+  if (numSigs % MAX_SIGS_PER_TXN === 0) {
+    numTxns = Math.floor(numSigs / MAX_SIGS_PER_TXN);
+  } else {
+    numTxns = Math.floor(numSigs / MAX_SIGS_PER_TXN) + 1;
+  }
 
   const SIG_LEN: number = 66;
   const BSIZE: number = SIG_LEN * MAX_SIGS_PER_TXN;
