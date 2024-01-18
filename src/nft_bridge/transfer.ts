@@ -1,5 +1,5 @@
 import { ethers, Overrides } from "ethers";
-import { ChainId, ChainName, createNonce } from "../utils";
+import { CHAIN_ID_ALGORAND, ChainId, ChainName, createNonce } from "../utils";
 import {
   NFT1155Implementation__factory,
   NFTBridge__factory,
@@ -135,6 +135,22 @@ export const getWrappedAddrNFT = async (
     '0x' + originNFTAddrB32,
   )
 
+  return wrappedAddr
+}
+
+export const getEvmWrappedAddress = async (
+  collectionAddress: number,
+  nftBridgeAddress: string,
+  signer: ethers.Signer | ethers.providers.Provider,
+): Promise<string> => {
+  const collectionAddressNumber = Number(collectionAddress);
+  const hexString = collectionAddressNumber.toString(16);
+  const paddingLength = 64 - hexString.length;
+  const padding = new Array(paddingLength + 1).join('0'); // Creates a string of repeated '0's
+  const paddedHex = '0x' + padding + hexString;
+  const algoNativeAddressB32 = '0x' + ethers.utils.hexZeroPad(paddedHex, 32).slice(2)
+  const nftBridge = NFTBridge__factory.connect(nftBridgeAddress, signer);
+  const wrappedAddr = await nftBridge.wrappedAsset(CHAIN_ID_ALGORAND, algoNativeAddressB32)
   return wrappedAddr
 }
 

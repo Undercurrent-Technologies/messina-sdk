@@ -961,7 +961,7 @@ export async function _submitVAAAlgorand(
     }
 
     // get the escrow
-    const escrowId = await getEscrowId(client, tokenBridgeId, asaID);
+    const escrowId = await getEscrowId(client, tokenBridgeId, asaID, false);
 
     let treasury = await getTreasuryAddress(client, tokenBridgeId);
     // Accounts
@@ -1122,6 +1122,7 @@ export async function getEscrowId(
   client: Algodv2,
   tokenBridgeId: bigint,
   assetId: bigint,
+  isNFT: boolean
 ) {
   let { lsa, doesExist } = await calcLogicSigAccount(
     client,
@@ -1139,7 +1140,12 @@ export async function getEscrowId(
 
   let escrowId: bigint = BigInt(0)
   if (ls.length > 8) {
-    const tmp = Buffer.from(ls.slice(190, 198));
+    let tmp: Buffer;
+    if (isNFT) {
+      tmp = Buffer.from(ls.slice(124, 132));
+    } else {
+      tmp = Buffer.from(ls.slice(190, 198));
+    }
     escrowId = tmp.readBigUInt64BE(0);
   }
 
