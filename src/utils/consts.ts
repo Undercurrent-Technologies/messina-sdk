@@ -30,8 +30,20 @@ export const CHAINS = {
   btc: 29,
   base: 30,
   sei: 32,
+  rootstock: 33,
+  scroll: 34,
+  mantle: 35,
   wormchain: 3104,
+  cosmoshub: 4000,
+  evmos: 4001,
+  kujira: 4002,
+  neutron: 4003,
+  celestia: 4004,
   sepolia: 10002,
+  arbitrum_sepolia: 10003,
+  base_sepolia: 10004,
+  optimism_sepolia: 10005,
+  holesky: 10006,
   cronos: 20025,
 } as const;
 
@@ -42,26 +54,35 @@ export type ChainId = typeof CHAINS[ChainName];
  *
  * All the EVM-based chain names that Wormhole supports
  */
-export type EVMChainName =
-| "ethereum"
-| "bsc"
-| "polygon"
-| "avalanche"
-| "oasis"
-| "aurora"
-| "fantom"
-| "karura"
-| "acala"
-| "klaytn"
-| "celo"
-| "moonbeam"
-| "neon"
-| "arbitrum"
-| "optimism"
-| "gnosis"
-| "base"
-| "sepolia"
-| "cronos";
+export const EVMChainNames = [
+  "ethereum",
+  "bsc",
+  "polygon",
+  "avalanche",
+  "oasis",
+  "aurora",
+  "fantom",
+  "karura",
+  "acala",
+  "klaytn",
+  "celo",
+  "moonbeam",
+  "neon",
+  "arbitrum",
+  "optimism",
+  "gnosis",
+  "base",
+  "rootstock",
+  "scroll",
+  "mantle",
+  "sepolia",
+  "arbitrum_sepolia",
+  "base_sepolia",
+  "optimism_sepolia",
+  "holesky",
+  "cronos",
+] as const;
+export type EVMChainName = typeof EVMChainNames[number];
 
 export type Contracts = {
   core: string | undefined;
@@ -227,9 +248,9 @@ const MAINNET = {
     nft_bridge: undefined,
   },
   base: {
-    core: undefined,
-    token_bridge: undefined,
-    nft_bridge: undefined,
+    core: "0xbebdb6C8ddC678FfA9f8748f85C815C556Dd8ac6",
+    token_bridge: "0x8d2de8d2f73F1F4cAB472AC9A881C9b123C79627",
+    nft_bridge: "0xDA3adC6621B2677BEf9aD26598e6939CF0D92f88",
   },
   sei: {
     core: "sei1gjrrme22cyha4ht2xapn3f08zzw6z3d4uxx6fyy9zd5dyr3yxgzqqncdqn",
@@ -237,13 +258,78 @@ const MAINNET = {
       "sei1smzlm9t79kur392nu9egl8p8je9j92q4gzguewj56a05kyxxra0qy0nuf3",
     nft_bridge: undefined,
   },
-  wormchain: {
+  rootstock: {
+    core: "0xbebdb6C8ddC678FfA9f8748f85C815C556Dd8ac6",
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  scroll: {
     core: undefined,
     token_bridge: undefined,
     nft_bridge: undefined,
   },
+  mantle: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  wormchain: {
+    core: "wormhole1ufs3tlq4umljk0qfe8k5ya0x6hpavn897u2cnf9k0en9jr7qarqqaqfk2j",
+    token_bridge:
+      "wormhole1466nf3zuxpya8q9emxukd7vftaf6h4psr0a07srl5zw74zh84yjq4lyjmh",
+    nft_bridge: undefined,
+  },
   sepolia: {
     // This is testnet only.
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  arbitrum_sepolia: {
+    // This is testnet only.
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  base_sepolia: {
+    // This is testnet only.
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  optimism_sepolia: {
+    // This is testnet only.
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  holesky: {
+    // This is testnet only.
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  cosmoshub: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  evmos: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  kujira: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  neutron: {
+    core: "neutron16rerygcpahqcxx5t8vjla46ym8ccn7xz7rtc6ju5ujcd36cmc7zs9zrunh",
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  celestia: {
     core: undefined,
     token_bridge: undefined,
     nft_bridge: undefined,
@@ -350,7 +436,8 @@ const TESTNET = {
     core: "0x5bc11445584a763c1fa7ed39081f1b920954da14e04b32440cba863d03e19625",
     token_bridge:
       "0x576410486a2da45eee6c949c995670112ddf2fbeedab20350d506328eefc9d4f",
-    nft_bridge: undefined,
+    nft_bridge:
+      "0x1bdffae984043833ed7fe223f7af7a3f8902d04129b14f801823e64827da7130",
   },
   sui: {
     core: "0x31358d198147da50db32eda2562951d53973a0c0ad5ed738e9b17d88b213d790",
@@ -416,15 +503,76 @@ const TESTNET = {
       "sei1jv5xw094mclanxt5emammy875qelf3v62u4tl4lp5nhte3w3s9ts9w9az2",
     nft_bridge: undefined,
   },
-  wormchain: {
-    core: undefined,
+  rootstock: {
+    core: "0xbebdb6C8ddC678FfA9f8748f85C815C556Dd8ac6",
     token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  scroll: {
+    core: "0x055F47F1250012C6B20c436570a76e52c17Af2D5",
+    token_bridge: "0x22427d90B7dA3fA4642F7025A854c7254E4e45BF",
+    nft_bridge: "0x47B9a1406BEe29a3001BFEB7e45aE45fFFB40c18",
+  },
+  mantle: {
+    core: "0x6b9C8671cdDC8dEab9c719bB87cBd3e782bA6a35",
+    token_bridge: "0xC7A204bDBFe983FCD8d8E61D02b475D4073fF97e",
+    nft_bridge: "0x23908A62110e21C04F3A4e011d24F901F911744A",
+  },
+  wormchain: {
+    core: "wormhole16jzpxp0e8550c9aht6q9svcux30vtyyyyxv5w2l2djjra46580wsazcjwp",
+    token_bridge:
+      "wormhole1aaf9r6s7nxhysuegqrxv0wpm27ypyv4886medd3mrkrw6t4yfcnst3qpex",
     nft_bridge: undefined,
   },
   sepolia: {
     core: "0x4a8bc80Ed5a4067f1CCf107057b8270E0cC11A78",
     token_bridge: "0xDB5492265f6038831E89f495670FF909aDe94bd9",
     nft_bridge: "0x6a0B52ac198e4870e5F3797d5B403838a5bbFD99",
+  },
+  arbitrum_sepolia: {
+    core: "0x6b9C8671cdDC8dEab9c719bB87cBd3e782bA6a35",
+    token_bridge: "0xC7A204bDBFe983FCD8d8E61D02b475D4073fF97e",
+    nft_bridge: "0x23908A62110e21C04F3A4e011d24F901F911744A",
+  },
+  base_sepolia: {
+    core: "0x79A1027a6A159502049F10906D333EC57E95F083",
+    token_bridge: "0x86F55A04690fd7815A3D802bD587e83eA888B239",
+    nft_bridge: "0x268557122Ffd64c85750d630b716471118F323c8",
+  },
+  optimism_sepolia: {
+    core: "0x31377888146f3253211EFEf5c676D41ECe7D58Fe",
+    token_bridge: "0x99737Ec4B815d816c49A385943baf0380e75c0Ac",
+    nft_bridge: "0x27812285fbe85BA1DF242929B906B31EE3dd1b9f",
+  },
+  holesky: {
+    core: "0xa10f2eF61dE1f19f586ab8B6F2EbA89bACE63F7a",
+    token_bridge: "0x76d093BbaE4529a342080546cAFEec4AcbA59EC6",
+    nft_bridge: "0xc8941d483c45eF8FB72E4d1F9dDE089C95fF8171",
+  },
+  cosmoshub: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  evmos: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  kujira: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  neutron: {
+    core: "neutron1rhqgnak5z0pla5sgqq7ykqh8glckk4h67fe0hgjfcyulx2nqa0yqaswtnp",
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  celestia: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
   },
   cronos: {
     core: undefined,
@@ -445,9 +593,10 @@ const DEVNET = {
     nft_bridge: "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA",
   },
   terra: {
-    core: "terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5",
-    token_bridge: "terra10pyejy66429refv3g35g2t7am0was7ya7kz2a4",
-    nft_bridge: "terra1plju286nnfj3z54wgcggd4enwaa9fgf5kgrgzl",
+    core: "terra14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9ssrc8au",
+    token_bridge:
+      "terra1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrquka9l6",
+    nft_bridge: undefined,
   },
   ethereum: {
     core: "0xC89Ce4735882C9F0f0FE26686c53074E09B0D550",
@@ -475,8 +624,8 @@ const DEVNET = {
     nft_bridge: undefined,
   },
   algorand: {
-    core: "4",
-    token_bridge: "6",
+    core: "1004",
+    token_bridge: "1006",
     nft_bridge: undefined,
   },
   aurora: {
@@ -593,12 +742,73 @@ const DEVNET = {
     token_bridge: undefined,
     nft_bridge: undefined,
   },
+  rootstock: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  scroll: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  mantle: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
   wormchain: {
-    core: "wormhole1ap5vgur5zlgys8whugfegnn43emka567dtq0jl",
-    token_bridge: "wormhole1zugu6cajc4z7ue29g9wnes9a5ep9cs7yu7rn3z",
+    core: "wormhole17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgshdnj3k",
+    token_bridge:
+      "wormhole1ghd753shjuwexxywmgs4xz7x2q732vcnkm6h2pyv9s6ah3hylvrqtm7t3h",
     nft_bridge: undefined,
   },
   sepolia: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  arbitrum_sepolia: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  base_sepolia: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  optimism_sepolia: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  holesky: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  cosmoshub: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  evmos: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  kujira: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  neutron: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  celestia: {
     core: undefined,
     token_bridge: undefined,
     nft_bridge: undefined,
@@ -679,8 +889,21 @@ export const CHAIN_ID_XPLA = CHAINS["xpla"];
 export const CHAIN_ID_BTC = CHAINS["btc"];
 export const CHAIN_ID_BASE = CHAINS["base"];
 export const CHAIN_ID_SEI = CHAINS["sei"];
+export const CHAIN_ID_ROOTSTOCK = CHAINS["rootstock"];
+export const CHAIN_ID_SCROLL = CHAINS["scroll"];
+export const CHAIN_ID_MANTLE = CHAINS["mantle"];
 export const CHAIN_ID_WORMCHAIN = CHAINS["wormchain"];
+export const CHAIN_ID_GATEWAY = CHAIN_ID_WORMCHAIN;
+export const CHAIN_ID_COSMOSHUB = CHAINS["cosmoshub"];
+export const CHAIN_ID_EVMOS = CHAINS["evmos"];
+export const CHAIN_ID_KUJIRA = CHAINS["kujira"];
+export const CHAIN_ID_NEUTRON = CHAINS["neutron"];
+export const CHAIN_ID_CELESTIA = CHAINS["celestia"];
 export const CHAIN_ID_SEPOLIA = CHAINS["sepolia"];
+export const CHAIN_ID_ARBITRUM_SEPOLIA = CHAINS["arbitrum_sepolia"];
+export const CHAIN_ID_BASE_SEPOLIA = CHAINS["base_sepolia"];
+export const CHAIN_ID_OPTIMISM_SEPOLIA = CHAINS["optimism_sepolia"];
+export const CHAIN_ID_HOLESKY = CHAINS["holesky"];
 export const CHAIN_ID_CRONOS = CHAINS["cronos"];
 
 // This inverts the [[CHAINS]] object so that we can look up a chain by id
@@ -775,32 +998,8 @@ export function coalesceChainName(chain: ChainId | ChainName): ChainName {
 export function isEVMChain(
   chain: ChainId | ChainName
 ): chain is EVMChainId | EVMChainName {
-  let chainId = coalesceChainId(chain);
-  if (
-    chainId === CHAIN_ID_ETH ||
-    chainId === CHAIN_ID_BSC ||
-    chainId === CHAIN_ID_AVAX ||
-    chainId === CHAIN_ID_POLYGON ||
-    chainId === CHAIN_ID_OASIS ||
-    chainId === CHAIN_ID_AURORA ||
-    chainId === CHAIN_ID_FANTOM ||
-    chainId === CHAIN_ID_KARURA ||
-    chainId === CHAIN_ID_ACALA ||
-    chainId === CHAIN_ID_KLAYTN ||
-    chainId === CHAIN_ID_CELO ||
-    chainId === CHAIN_ID_MOONBEAM ||
-    chainId === CHAIN_ID_NEON ||
-    chainId === CHAIN_ID_ARBITRUM ||
-    chainId === CHAIN_ID_OPTIMISM ||
-    chainId === CHAIN_ID_GNOSIS ||
-    chainId === CHAIN_ID_BASE ||
-    chainId === CHAIN_ID_SEPOLIA ||
-    chainId === CHAIN_ID_CRONOS
-  ) {
-    return isEVM(chainId);
-  } else {
-    return notEVM(chainId);
-  }
+  const chainName = coalesceChainName(chain);
+  return EVMChainNames.includes(chainName as unknown as EVMChainName);
 }
 
 /**
