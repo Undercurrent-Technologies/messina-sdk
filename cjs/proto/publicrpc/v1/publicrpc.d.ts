@@ -35,6 +35,10 @@ export declare enum ChainID {
     CHAIN_ID_BASE = 30,
     CHAIN_ID_SEI = 32,
     CHAIN_ID_SEPOLIA = 10002,
+    CHAIN_ID_ARBITRUM_SEPOLIA = 10003,
+    CHAIN_ID_BASE_SEPOLIA = 10004,
+    CHAIN_ID_OPTIMISM_SEPOLIA = 10005,
+    CHAIN_ID_HOLESKY = 10006,
     CHAIN_ID_CRONOS = 20025,
     UNRECOGNIZED = -1
 }
@@ -198,4 +202,4 @@ declare type Builtin = Date | Function | Uint8Array | string | number | boolean 
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {
     [K in keyof T]?: DeepPartial<T[K]>;
 } : Partial<T>;
-export {};
+export { };

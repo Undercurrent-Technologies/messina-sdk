@@ -66,6 +66,10 @@ var ChainID;
     ChainID[ChainID["CHAIN_ID_BASE"] = 30] = "CHAIN_ID_BASE";
     ChainID[ChainID["CHAIN_ID_SEI"] = 32] = "CHAIN_ID_SEI";
     ChainID[ChainID["CHAIN_ID_SEPOLIA"] = 10002] = "CHAIN_ID_SEPOLIA";
+    ChainID[ChainID["CHAIN_ID_ARBITRUM_SEPOLIA"] = 10003] = "CHAIN_ID_ARBITRUM_SEPOLIA";
+    ChainID[ChainID["CHAIN_ID_BASE_SEPOLIA"] = 10004] = "CHAIN_ID_BASE_SEPOLIA";
+    ChainID[ChainID["CHAIN_ID_OPTIMISM_SEPOLIA"] = 10005] = "CHAIN_ID_OPTIMISM_SEPOLIA";
+    ChainID[ChainID["CHAIN_ID_HOLESKY"] = 10006] = "CHAIN_ID_HOLESKY";
     ChainID[ChainID["CHAIN_ID_CRONOS"] = 20025] = "CHAIN_ID_CRONOS";
     ChainID[ChainID["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(ChainID = exports.ChainID || (exports.ChainID = {}));
@@ -167,6 +171,14 @@ function chainIDFromJSON(object) {
         case 10002:
         case "CHAIN_ID_SEPOLIA":
             return ChainID.CHAIN_ID_SEPOLIA;
+        case 10003:
+            return ChainID.CHAIN_ID_ARBITRUM_SEPOLIA;
+        case 10004:
+            return ChainID.CHAIN_ID_BASE_SEPOLIA;
+        case 10005:
+            return ChainID.CHAIN_ID_OPTIMISM_SEPOLIA;
+        case 10006:
+            return ChainID.CHAIN_ID_HOLESKY;
         case 20025:
         case "CHAIN_ID_CRONOS":
             return ChainID.CHAIN_ID_CRONOS;
@@ -243,6 +255,14 @@ function chainIDToJSON(object) {
             return "CHAIN_ID_SEI";
         case ChainID.CHAIN_ID_SEPOLIA:
             return "CHAIN_ID_SEPOLIA";
+        case ChainID.CHAIN_ID_ARBITRUM_SEPOLIA:
+            return "CHAIN_ID_ARBITRUM_SEPOLIA";
+        case ChainID.CHAIN_ID_BASE_SEPOLIA:
+            return "CHAIN_ID_BASE_SEPOLIA";
+        case ChainID.CHAIN_ID_OPTIMISM_SEPOLIA:
+            return "CHAIN_ID_OPTIMISM_SEPOLIA";
+        case ChainID.CHAIN_ID_HOLESKY:
+            return "CHAIN_ID_HOLESKY";
         case ChainID.CHAIN_ID_CRONOS:
             return "CHAIN_ID_CRONOS";    
         default:
