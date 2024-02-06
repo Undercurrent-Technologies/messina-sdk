@@ -1,5 +1,5 @@
 {
-  "name": "@undercurrent/messina-sdk",
+  "name": "@algo-foundry/messina-sdk",
   "version": "0.5.3",
   "description": "The official SDK for Messina Bridge.",
   "homepage": "https://messina.one",
