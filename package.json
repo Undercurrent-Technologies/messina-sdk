@@ -1,6 +1,6 @@
 {
   "name": "@algo-foundry/messina-sdk",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "The official SDK for Messina Bridge.",
   "homepage": "https://messina.one",
   "main": "./lib/cjs/index.js",
@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Algo-Foundry/messina-sdk.git"
+    "url": "git+https://github.com/Undercurrent-Technologies/messina-sdk.git"
   },
   "author": "messina project contributors",
   "scripts": {
