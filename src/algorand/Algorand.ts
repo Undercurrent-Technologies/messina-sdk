@@ -1064,6 +1064,7 @@ export async function updateTokenConfigOnAlgorand(
   tokenBridgeId: bigint,
   senderAddr: string,
   assetId: bigint,
+  escrowId: bigint,
   transferFee: bigint,
   redeemFee: bigint,
   minToken: bigint,
@@ -1101,6 +1102,7 @@ export async function updateTokenConfigOnAlgorand(
     appArgs: [
       textToUint8Array("updateTokenConfig"),
       algosdk.encodeUint64(assetId),
+      algosdk.encodeUint64(escrowId),
       algosdk.encodeUint64(transferFee),
       algosdk.encodeUint64(redeemFee),
       algosdk.encodeUint64(minToken),
@@ -1163,7 +1165,8 @@ export async function escrowWithdraw(
   tokenBridgeId: bigint,
   senderAddr: string,
   assetId: bigint,
-  amount: bigint
+  amount: bigint,
+  isNFT?: boolean
 ): Promise<TransactionSignerPair[]> {
   const params: algosdk.SuggestedParams = await client
     .getTransactionParams()
@@ -1185,7 +1188,12 @@ export async function escrowWithdraw(
 
   let escrowId: bigint = BigInt(0)
   if (ls.length > 8) {
-    const tmp = Buffer.from(ls.slice(190, 198));
+    let tmp: Buffer;
+    if (isNFT) {
+      tmp = Buffer.from(ls.slice(124, 132));
+    } else {
+      tmp = Buffer.from(ls.slice(190, 198));
+    }
     escrowId = tmp.readBigUInt64BE(0);
   }
 
@@ -1235,7 +1243,8 @@ export async function escrowDeposit(
   tokenBridgeId: bigint,
   senderAddr: string,
   assetId: bigint,
-  amount: bigint
+  amount: bigint,
+  isNFT?: boolean
 ): Promise<TransactionSignerPair[]> {
   const params: algosdk.SuggestedParams = await client
     .getTransactionParams()
@@ -1257,7 +1266,12 @@ export async function escrowDeposit(
 
   let escrowId: bigint = BigInt(0)
   if (ls.length > 8) {
-    const tmp = Buffer.from(ls.slice(190, 198));
+    let tmp: Buffer;
+    if (isNFT) {
+      tmp = Buffer.from(ls.slice(124, 132));
+    } else {
+      tmp = Buffer.from(ls.slice(190, 198));
+    }
     escrowId = tmp.readBigUInt64BE(0);
   }
 
