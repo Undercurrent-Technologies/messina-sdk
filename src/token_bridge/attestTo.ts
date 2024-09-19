@@ -1,7 +1,7 @@
 import { Algodv2 } from "algosdk";
 import { ethers, Overrides } from "ethers";
 import { TransactionSignerPair, _submitVAAAlgorand } from "../algorand";
-import { Bridge__factory } from "../ethers-contracts";
+import { BridgeImplementationV2__factory } from "../ethers-contracts";
 import { bigIntZero } from "../utils";
 
 export async function attestToEth(
@@ -19,7 +19,7 @@ export async function attestToEth(
   destinationFee?: boolean,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ): Promise<ethers.ContractReceipt> {
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
   const finalSourceFee = (typeof sourceFee !== 'undefined') ? sourceFee : ethers.BigNumber.from(transferFee).gt(bigIntZero);
   const finalDestinationFee = (typeof destinationFee !== 'undefined') ? destinationFee : ethers.BigNumber.from(redeemFee).gt(bigIntZero);
   const v = await bridge.receiveAttest(signedVAA, tokenAddress, { min: minAmount, max: maxAmount, transferFee: transferFee, redeemFee: redeemFee, Escrow: escrow, src: finalSourceFee, dest: finalDestinationFee }, network, overrides);

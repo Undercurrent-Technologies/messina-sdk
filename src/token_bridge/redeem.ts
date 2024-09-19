@@ -1,7 +1,7 @@
 import { Algodv2 } from "algosdk";
 import { ethers, Overrides } from "ethers";
 import { TransactionSignerPair, _submitVAAAlgorand } from "../algorand";
-import { Bridge__factory } from "../ethers-contracts";
+import { BridgeImplementationV2__factory } from "../ethers-contracts";
 
 export async function redeemOnEth(
   tokenBridgeAddress: string,
@@ -10,11 +10,31 @@ export async function redeemOnEth(
   network: string,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
   const v = await bridge.completeTransfer(signedVAA, network, overrides);
   const receipt = await v.wait();
   return receipt;
 }
+
+
+export async function redeemOnEthWithType(
+  tokenBridgeAddress: string,
+  signer: ethers.Signer,
+  signedVAA: Uint8Array,
+  messageType: string,
+  messagePayload: string,
+  network: string,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
+) {
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
+  const v = await bridge.completeTransferWithType(signedVAA, {
+    messageType: messageType,
+    messagePayload: messagePayload
+  }, network, overrides);
+  const receipt = await v.wait();
+  return receipt;
+}
+
 
 // export async function redeemOnEthNative(
 //   tokenBridgeAddress: string,
@@ -22,7 +42,7 @@ export async function redeemOnEth(
 //   signedVAA: Uint8Array,
 //   overrides: Overrides & { from?: string | Promise<string> } = {}
 // ) {
-//   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+//   const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
 //   const v = await bridge.completeTransferAndUnwrapETH(signedVAA, overrides);
 //   const receipt = await v.wait();
 //   return receipt;

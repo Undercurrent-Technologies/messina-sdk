@@ -4,6 +4,7 @@ export * from "./rpc";
 export * from "./utils";
 export * from "./bridge";
 export * from "./token_bridge";
+export * from "./hop";
 
 export * as ethers_contracts from "./ethers-contracts";
 export * as terra from "./terra";
@@ -14,3 +15,4 @@ export * as token_bridge from "./token_bridge";
 export * as nft_bridge from "./nft_bridge";
 export * as algorand from "./algorand";
 export * from "@certusone/wormhole-sdk-wasm";
+export * as hop from "./hop";
