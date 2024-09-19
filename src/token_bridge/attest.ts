@@ -10,7 +10,7 @@ import algosdk, {
 } from "algosdk";
 import { ethers, PayableOverrides } from "ethers";
 import { getMessageFee, optin, TransactionSignerPair } from "../algorand";
-import { Bridge__factory } from "../ethers-contracts";
+import { BridgeImplementationV2__factory } from "../ethers-contracts";
 import { textToHexString, textToUint8Array, uint8ArrayToHex } from "../utils";
 import { bigIntZero, safeBigIntToNumber } from "../utils/bigint";
 import { createNonce } from "../utils/createNonce";
@@ -29,7 +29,7 @@ export async function attestFromEth(
   destinationFee?: boolean,
   overrides: PayableOverrides & { from?: string | Promise<string> } = {}
 ): Promise<ethers.ContractReceipt> {
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
   const finalSourceFee = (typeof sourceFee !== 'undefined') ? sourceFee : ethers.BigNumber.from(transferFee).gt(bigIntZero);
   const finalDestinationFee = (typeof destinationFee !== 'undefined') ? destinationFee : ethers.BigNumber.from(redeemFee).gt(bigIntZero);
   const v = await bridge.attestToken(tokenAddress, createNonce(), { min: minAmount, max: maxAmount, transferFee: transferFee, redeemFee: redeemFee, Escrow: escrow, src: finalSourceFee, dest: finalDestinationFee }, network, overrides);

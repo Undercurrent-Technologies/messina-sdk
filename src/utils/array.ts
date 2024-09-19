@@ -231,7 +231,7 @@ export const uint8ArrayToNative = (a: Uint8Array, chainId: ChainId) =>
   hexToNativeString(uint8ArrayToHex(a), chainId);
 
 export function chunks<T>(array: T[], size: number): T[][] {
-  return Array.apply<number, T[], T[][]>(
+  return Array.apply(
     0,
     new Array(Math.ceil(array.length / size))
   ).map((_, index) => array.slice(index * size, (index + 1) * size));

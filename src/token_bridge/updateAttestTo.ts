@@ -2,7 +2,7 @@ import { ethers, Overrides } from "ethers";
 import {
   attestToAlgorand,
 } from ".";
-import { Bridge__factory } from "../ethers-contracts";
+import { BridgeImplementationV2__factory } from "../ethers-contracts";
 import { bigIntZero } from "../utils";
 
 export async function updateAttestToEth(
@@ -20,7 +20,7 @@ export async function updateAttestToEth(
   destinationFee?: boolean,
   overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
 
   const finalSourceFee = (typeof sourceFee !== 'undefined') ? sourceFee : ethers.BigNumber.from(transferFee).gt(bigIntZero);
   const finalDestinationFee = (typeof destinationFee !== 'undefined') ? destinationFee : ethers.BigNumber.from(redeemFee).gt(bigIntZero);

@@ -45,6 +45,8 @@ export const CHAINS = {
   optimism_sepolia: 10005,
   holesky: 10006,
   cronos: 20025,
+  coredao: 20026,
+  manta: 20027,
 } as const;
 
 export type ChainName = keyof typeof CHAINS;
@@ -81,6 +83,8 @@ export const EVMChainNames = [
   "optimism_sepolia",
   "holesky",
   "cronos",
+  "coredao",
+  "manta",
 ] as const;
 export type EVMChainName = typeof EVMChainNames[number];
 
@@ -339,6 +343,16 @@ const MAINNET = {
     token_bridge: undefined,
     nft_bridge: undefined,
   },
+  coredao: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  manta: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
 };
 
 const TESTNET = {
@@ -575,6 +589,16 @@ const TESTNET = {
     nft_bridge: undefined,
   },
   cronos: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  coredao: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  manta: {
     core: undefined,
     token_bridge: undefined,
     nft_bridge: undefined,
@@ -818,6 +842,16 @@ const DEVNET = {
     token_bridge: undefined,
     nft_bridge: undefined,
   },
+  coredao: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  manta: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
 };
 
 /**
@@ -905,6 +939,8 @@ export const CHAIN_ID_BASE_SEPOLIA = CHAINS["base_sepolia"];
 export const CHAIN_ID_OPTIMISM_SEPOLIA = CHAINS["optimism_sepolia"];
 export const CHAIN_ID_HOLESKY = CHAINS["holesky"];
 export const CHAIN_ID_CRONOS = CHAINS["cronos"];
+export const CHAIN_ID_COREDAO = CHAINS["coredao"];
+export const CHAIN_ID_MANTA = CHAINS["manta"];
 
 // This inverts the [[CHAINS]] object so that we can look up a chain by id
 export type ChainIdToName = {

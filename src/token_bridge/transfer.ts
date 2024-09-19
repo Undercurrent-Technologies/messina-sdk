@@ -20,7 +20,7 @@ import {
 } from "../algorand";
 import { getEmitterAddressAlgorand } from "../bridge";
 import {
-  Bridge__factory,
+  BridgeImplementationV2__factory,
   TokenImplementation__factory,
 } from "../ethers-contracts";
 import {
@@ -71,7 +71,7 @@ export async function transferFromEth(
   overrides: PayableOverrides & { from?: string | Promise<string> } = {}
 ) {
   const recipientChainId = coalesceChainId(recipientChain);
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
   const v = await bridge.transferTokens(
     tokenAddress,
     amount,
@@ -97,7 +97,7 @@ export async function transferFromEthNative(
   overrides: PayableOverrides & { from?: string | Promise<string> } = {},
 ) {
   const recipientChainId = coalesceChainId(recipientChain);
-  const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
+  const bridge = BridgeImplementationV2__factory.connect(tokenBridgeAddress, signer);
   const v = await bridge.wrapAndTransferETH(
     recipientChainId,
     recipientAddress,
