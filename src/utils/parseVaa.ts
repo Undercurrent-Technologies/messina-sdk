@@ -161,6 +161,58 @@ export const parseTransferPayload = (arr: Buffer) => ({
   fee: BigNumber.from(arr.slice(101, 101 + 32)).toBigInt(),
 });
 
+export const parseCCTPTransferPayload = (arr: Buffer) => {
+  let index = 1;
+  const token = arr.slice(index, index + 32).toString("hex");
+  index += 32;
+
+  const amount = BigNumber.from(arr.slice(index, index + 32));
+  index += 32;
+
+  const sourceDomain = arr.readUInt32BE(index);
+  index += 4;
+
+  const targetDomain = arr.readUInt32BE(index);
+  index += 4;
+
+  const nonce = arr.readBigUint64BE(index);
+  index += 8;
+
+  const fromAddress = arr.slice(index, index + 32).toString('hex');
+  index += 32;
+
+  const mintRecipient = arr.slice(index, index + 32).toString('hex');
+  index += 32;
+
+  const finalRecipient = arr.slice(index, index + 32).toString('hex');
+  index += 32;
+
+  const targetChain = arr.readUInt16BE(index);
+  index += 2;
+
+  const arbiterFee = BigNumber.from(arr.slice(index, index + 32));
+  index += 32;
+
+  const payloadLen = arr.readInt16BE(index);
+  index += 2;
+
+  const payload = arr.slice(index, index + payloadLen).toString('hex');
+
+  return {
+    token,
+    amount,
+    sourceDomain,
+    targetDomain,
+    nonce,
+    fromAddress,
+    mintRecipient,
+    finalRecipient,
+    targetChain,
+    arbiterFee,
+    payload,
+  }
+}
+
 //This returns a corrected amount, which accounts for the difference between the VAA
 //decimals, and the decimals of the asset.
 // const normalizeVaaAmount = (
