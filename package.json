@@ -1,6 +1,6 @@
 {
   "name": "@algo-foundry/messina-sdk",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "The official SDK for Messina Bridge.",
   "homepage": "https://messina.one",
   "main": "./lib/cjs/index.js",
