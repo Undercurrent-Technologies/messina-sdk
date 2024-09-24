@@ -175,7 +175,7 @@ export const parseCCTPTransferPayload = (arr: Buffer) => {
   const targetDomain = arr.readUInt32BE(index);
   index += 4;
 
-  const nonce = arr.readBigUint64BE(index);
+  const nonce = BigNumber.from(arr.slice(index, index + 8));
   index += 8;
 
   const fromAddress = arr.slice(index, index + 32).toString('hex');
