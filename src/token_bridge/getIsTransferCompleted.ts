@@ -10,6 +10,9 @@ import { safeBigIntToNumber } from "../utils/bigint";
 import { ethers } from "ethers";
 import { uint8ArrayToHex } from "../utils";
 import { Bridge__factory } from "../ethers-contracts";
+import { Commitment, Connection, PublicKeyInitData } from "@solana/web3.js";
+import { getClaim } from "../solana/wormhole";
+import { parseVaa, SignedVaa } from "../vaa/wormhole";
 
 export async function getIsTransferCompletedEth(
   tokenBridgeAddress: string,
@@ -115,4 +118,21 @@ export async function getIsTransferCompletedAlgorand(
   const seqAddr = lsa.address();
   const retVal: boolean = await checkBitsSet(client, appId, seqAddr, seq);
   return retVal;
+}
+
+export async function getIsTransferCompletedSolana(
+  tokenBridgeAddress: PublicKeyInitData,
+  signedVAA: SignedVaa,
+  connection: Connection,
+  commitment?: Commitment
+): Promise<boolean> {
+  const parsed = parseVaa(signedVAA);
+  return getClaim(
+    connection,
+    tokenBridgeAddress,
+    parsed.emitterAddress,
+    parsed.emitterChain,
+    parsed.sequence,
+    commitment
+  ).catch((e) => false);
 }

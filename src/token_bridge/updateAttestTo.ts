@@ -1,6 +1,7 @@
 import { ethers, Overrides } from "ethers";
 import {
   attestToAlgorand,
+  attestToSolana,
 } from ".";
 import { BridgeImplementationV2__factory } from "../ethers-contracts";
 import { bigIntZero } from "../utils";
@@ -30,3 +31,4 @@ export async function updateAttestToEth(
 }
 
 export const updateAttestToAlgorand = attestToAlgorand;
+export const updateWrappedOnSolana = attestToSolana;

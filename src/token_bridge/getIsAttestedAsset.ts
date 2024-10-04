@@ -2,6 +2,8 @@ import { Algodv2, getApplicationAddress } from "algosdk";
 import { ethers } from "ethers";
 import { Bridge__factory } from "../ethers-contracts";
 import { safeBigIntToNumber } from "../utils/bigint";
+import { Commitment, Connection, PublicKeyInitData } from "@solana/web3.js";
+import { getWrappedMeta } from "../solana/tokenBridge";
 
 /**
  * Returns whether or not an asset address on Ethereum is a wormhole wrapped asset
@@ -42,3 +44,19 @@ export async function getIsAttestedAssetAlgorand(
   const wormhole: boolean = creatorAcctInfo["auth-addr"] === tbAddr;
   return wormhole;
 }
+
+export async function getIsAttestedAssetSolana(
+  connection: Connection,
+  tokenBridgeAddress: PublicKeyInitData,
+  mintAddress: PublicKeyInitData,
+  commitment?: Commitment
+): Promise<boolean> {
+  if (!mintAddress) {
+    return false;
+  }
+  return getWrappedMeta(connection, tokenBridgeAddress, mintAddress, commitment)
+    .catch((_) => null)
+    .then((meta) => meta != null);
+}
+
+export const getIsAttestedAssetSol = getIsAttestedAssetSolana;
