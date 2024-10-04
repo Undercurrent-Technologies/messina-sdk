@@ -14,6 +14,8 @@ import {
   CHAIN_ID_ALGORAND,
   coalesceChainId,
 } from "../utils";
+import { Commitment, Connection, PublicKeyInitData } from "@solana/web3.js";
+import { deriveWrappedMintKey, getWrappedMeta } from "../solana/tokenBridge";
 
 /**
  * Returns a foreign asset address on Ethereum for a provided native chain and asset address, AddressZero if it does not exist
@@ -91,4 +93,21 @@ export async function getForeignAssetAlgorand(
       return tmp.readBigUInt64BE(0);
     } else return null;
   }
+}
+
+export async function getForeignAssetSolana(
+  connection: Connection,
+  tokenBridgeAddress: PublicKeyInitData,
+  originChain: ChainId | ChainName,
+  originAsset: Uint8Array,
+  commitment?: Commitment
+): Promise<string | null> {
+  const mint = deriveWrappedMintKey(
+    tokenBridgeAddress,
+    coalesceChainId(originChain) as number,
+    originAsset
+  );
+  return getWrappedMeta(connection, tokenBridgeAddress, mint, commitment)
+    .catch((_) => null)
+    .then((meta) => (meta === null ? null : mint.toString()));
 }

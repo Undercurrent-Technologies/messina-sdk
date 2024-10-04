@@ -3,6 +3,15 @@ import { ethers, Overrides } from "ethers";
 import { TransactionSignerPair, _submitVAAAlgorand } from "../algorand";
 import { BridgeImplementationV2__factory } from "../ethers-contracts";
 import { bigIntZero } from "../utils";
+import {
+  Commitment,
+  Connection,
+  PublicKey,
+  PublicKeyInitData,
+  Transaction,
+} from "@solana/web3.js";
+import { SignedVaa } from "../vaa";
+import { createCreateWrappedInstruction } from "../solana/tokenBridge";
 
 export async function attestToEth(
   tokenBridgeAddress: string,
@@ -57,4 +66,28 @@ export async function attestToAlgorand(
     src,
     dest,
   );
+}
+
+export async function attestToSolana(
+  connection: Connection,
+  bridgeAddress: PublicKeyInitData,
+  tokenBridgeAddress: PublicKeyInitData,
+  payerAddress: PublicKeyInitData,
+  mintPubkey: PublicKeyInitData,
+  signedVaa: SignedVaa,
+  commitment?: Commitment
+): Promise<Transaction> {
+  const transaction = new Transaction().add(
+    createCreateWrappedInstruction(
+      tokenBridgeAddress,
+      bridgeAddress,
+      payerAddress,
+      mintPubkey,
+      signedVaa
+    )
+  );
+  const { blockhash } = await connection.getLatestBlockhash(commitment);
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = new PublicKey(payerAddress);
+  return transaction;
 }

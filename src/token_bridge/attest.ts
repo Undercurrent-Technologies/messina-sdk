@@ -14,6 +14,16 @@ import { BridgeImplementationV2__factory } from "../ethers-contracts";
 import { textToHexString, textToUint8Array, uint8ArrayToHex } from "../utils";
 import { bigIntZero, safeBigIntToNumber } from "../utils/bigint";
 import { createNonce } from "../utils/createNonce";
+import {
+  Commitment,
+  Connection,
+  Keypair,
+  PublicKey,
+  PublicKeyInitData,
+  Transaction,
+} from "@solana/web3.js";
+import { createBridgeFeeTransferInstruction } from "../solana";
+import { createAttestTokenInstruction, TokenConfigData } from "../solana/tokenBridge";
 
 export async function attestFromEth(
   tokenBridgeAddress: string,
@@ -336,4 +346,37 @@ export async function attestFromNFTAlgorand(
   txs.push({ tx: appTxn, signer: null });
 
   return txs;
+}
+
+export async function attestFromSolana(
+  connection: Connection,
+  bridgeAddress: PublicKeyInitData,
+  tokenBridgeAddress: PublicKeyInitData,
+  payerAddress: PublicKeyInitData,
+  mintAddress: PublicKeyInitData,
+  tokenConfigData: TokenConfigData,
+  commitment?: Commitment,
+): Promise<Transaction> {
+  const nonce = createNonce().readUInt32LE(0);
+  const transferIx = await createBridgeFeeTransferInstruction(
+    connection,
+    bridgeAddress,
+    payerAddress
+  );
+  const messageKey = Keypair.generate();
+  const attestIx = createAttestTokenInstruction(
+    tokenBridgeAddress,
+    bridgeAddress,
+    payerAddress,
+    mintAddress,
+    messageKey.publicKey,
+    nonce,
+    tokenConfigData,
+  );
+  const transaction = new Transaction().add(transferIx, attestIx);
+  const { blockhash } = await connection.getLatestBlockhash(commitment);
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = new PublicKey(payerAddress);
+  transaction.partialSign(messageKey);
+  return transaction;
 }

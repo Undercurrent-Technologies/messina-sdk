@@ -12,13 +12,20 @@ import {
   CHAIN_ID_TERRA,
   coalesceChainId,
   hexToUint8Array,
+  CHAIN_ID_SOLANA,
 } from "../utils";
 import { safeBigIntToNumber } from "../utils/bigint";
 import {
   getIsAttestedAssetAlgorand,
   getIsAttestedAssetEth,
 } from "./getIsAttestedAsset";
-
+import {
+  Commitment,
+  Connection,
+  PublicKey,
+  PublicKeyInitData,
+} from "@solana/web3.js";
+import { getWrappedMeta } from "../solana/tokenBridge";
 // TODO: remove `as ChainId` and return number in next minor version as we can't ensure it will match our type definition
 export interface WormholeWrappedInfo {
   isWrapped: boolean;
@@ -133,4 +140,44 @@ export async function getOriginalAssetAlgorand(
   retVal.chainId = dlsBuffer.readInt16BE(92) as ChainId;
   retVal.assetAddress = new Uint8Array(dlsBuffer.slice(60, 60 + 32));
   return retVal;
+}
+
+export async function getOriginalAssetSolana(
+  connection: Connection,
+  tokenBridgeAddress: PublicKeyInitData,
+  mintAddress: PublicKeyInitData,
+  commitment?: Commitment
+): Promise<WormholeWrappedInfo> {
+  try {
+    const mint = new PublicKey(mintAddress);
+
+    return getWrappedMeta(
+      connection,
+      tokenBridgeAddress,
+      mintAddress,
+      commitment
+    )
+      .catch((_) => null)
+      .then((meta) => {
+        if (meta === null) {
+          return {
+            isWrapped: false,
+            chainId: CHAIN_ID_SOLANA,
+            assetAddress: mint.toBytes(),
+          };
+        } else {
+          return {
+            isWrapped: true,
+            chainId: meta.chain as ChainId,
+            assetAddress: Uint8Array.from(meta.tokenAddress),
+          };
+        }
+      });
+  } catch (_) {
+    return {
+      isWrapped: false,
+      chainId: CHAIN_ID_SOLANA,
+      assetAddress: new Uint8Array(32),
+    };
+  }
 }
