@@ -51,9 +51,6 @@ export class TokenConfig {
   }
 
   static deserialize(data: Buffer): TokenConfig {
-    if (data.length != 130) {
-      throw new Error("data.length != 130");
-    }
     const escrowAddress = data.subarray(0, 32);
     const transferFee = data.readBigUInt64LE(32);
     const redeemFee = data.readBigUInt64LE(40);

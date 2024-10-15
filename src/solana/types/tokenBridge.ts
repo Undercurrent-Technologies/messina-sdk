@@ -1264,7 +1264,7 @@ export type TokenBridge = {
           "type": "u64"
         }
       ]
-    }
+    },
   ],
   "accounts": [],
   "types": [
