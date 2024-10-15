@@ -104,6 +104,7 @@ function encodeTokenBridgeInstructionData(
   if (dataLen > 0) {
     instructionData.write(data!.toString("hex"), 1, "hex");
   }
+
   return instructionData;
 }
 
@@ -131,13 +132,14 @@ function encodeWithdraw({amount}: any): Buffer {
   );
 }
 
-function encodeUpdateTreasuryAddress({treasury}: any): Buffer {
+function encodeUpdateTreasuryAddress({treasuryAddress}: any): Buffer {
   const serialized = Buffer.alloc(32);
   serialized.write(
-    new PublicKey(treasury).toBuffer().toString("hex"),
+    new PublicKey(treasuryAddress).toBuffer().toString("hex"),
     0,
     "hex"
   );
+
   return encodeTokenBridgeInstructionData(
     TokenBridgeInstruction.UpdateTreasuryAddress,
     serialized

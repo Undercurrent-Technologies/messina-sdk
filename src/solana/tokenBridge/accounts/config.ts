@@ -37,9 +37,6 @@ export class TokenBridgeConfig {
   }
 
   static deserialize(data: Buffer): TokenBridgeConfig {
-    if (data.length != 129) {
-      throw new Error("data.length != 129");
-    }
     const isPaused = data.readUInt8(0) == 1;
     const wormholeProgramId = data.subarray(1, 33);
     const owner = data.subarray(33, 65);
