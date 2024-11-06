@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { approveEth, CHAIN_ID_AVAX, CHAIN_ID_ETH, EVMChainId, getAllowanceEth, getEmitterAddressEth, parseSequenceFromLogEth, redeemOnEthWithType, transferFromEth, tryNativeToUint8Array } from "@algo-foundry/messina-sdk";
+import { approveEth, CHAIN_ID_AVAX, getAllowanceEth, getEmitterAddressEth, parseSequenceFromLogEth, redeemOnEthWithType, transferFromEth, tryNativeToUint8Array } from "@algo-foundry/messina-sdk";
 import { getSignedVAA } from "@algo-foundry/messina-sdk/lib/cjs/rpc/getSignedVAAUpdate";
 
 //contract
