@@ -11,9 +11,9 @@ const ALGO_PORT = "";
 const ALGO_MNEMONIC = "";
 
 //contract
-const ALGO_BRIDGE_ID = 0;
-const ALGO_CORE_ID = 0;
-const ETH_BRIDGE_ADRESS = "";
+const ALGO_BRIDGE_ID = 1130460461;
+const ALGO_CORE_ID = 842125965;
+const ETH_BRIDGE_ADDRESS = "0xC74303104E4aa5833A59767d59e958f4a0F308D4";
 
 //ethereum
 const ETH_NODE_URL = "";
@@ -105,9 +105,10 @@ async function main(): Promise<void> {
     
     console.log("REDEEM ETH");  
     const redeem = await redeemOnEth(
-          ETH_BRIDGE_ADRESS,
+          ETH_BRIDGE_ADDRESS,
           signer, // Wallet from ethers js
-          vaaBytes
+          vaaBytes,
+          "WORMHOLE"
         );
 
     console.log("SUCCESSFULLY REDEEM =>" +redeem);  
