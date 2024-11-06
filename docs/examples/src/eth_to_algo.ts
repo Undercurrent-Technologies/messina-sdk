@@ -11,11 +11,11 @@ const ALGO_PORT = "";
 const ALGO_MNEMONIC = "";
 
 //contract
-const ALGO_BRIDGE_ID = 0;
-const ALGO_CORE_ID = 0;
+const ALGO_BRIDGE_ID = 1130460461;
+const ALGO_CORE_ID = 842125965;
 
-const ETH_BRIDGE_ADRESS = "";
-const ETH_CORE_ADRESS = "";
+const ETH_BRIDGE_ADDRESS = "0xC74303104E4aa5833A59767d59e958f4a0F308D4";
+const ETH_CORE_ADDRESS = "0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B";
 
 //ethereum
 const ETH_NODE_URL = "";
@@ -63,39 +63,33 @@ async function main(): Promise<void> {
     const signer = new ethers.Wallet(ETH_PRIVATE_KEY, provider);
     
     console.log("CHECK ALLOWANCE");
-    const allowance: ethers.BigNumber = await getAllowanceEth(ETH_BRIDGE_ADRESS,TOKEN_ADDRESS, signer);
+    const allowance: ethers.BigNumber = await getAllowanceEth(ETH_BRIDGE_ADDRESS,TOKEN_ADDRESS, signer);
     
     console.log("APPROVE ALLOWANCE"); 
     if(allowance.lt(AMOUNT_TO_TRANSFER)){
       await approveEth(
-        ETH_BRIDGE_ADRESS,
+        ETH_BRIDGE_ADDRESS,
         TOKEN_ADDRESS,
         signer,
         BigInt(AMOUNT_TO_TRANSFER * Math.pow(10, ASSET_DECIMALS))
       );
     }
 
-    await approveEth(
-      ETH_BRIDGE_ADRESS,
-      TOKEN_ADDRESS,
-      signer,
-      BigInt(AMOUNT_TO_TRANSFER * Math.pow(10, ASSET_DECIMALS))
-    );
-
     console.log("TRANSFER FROM ETH"); 
     const receipt: ethers.ContractReceipt = await transferFromEth(
-          ETH_BRIDGE_ADRESS,
-          signer, 
+          ETH_BRIDGE_ADDRESS,
+          signer,
           TOKEN_ADDRESS,
           BigInt(AMOUNT_TO_TRANSFER * Math.pow(10, ASSET_DECIMALS)), // AMOUNT_TO_TRANSFER * (10 ^ ASSET_DECIMALS)
           CHAIN_ID_ALGORAND,
-          algosdk.decodeAddress(wallet.addr).publicKey
+          algosdk.decodeAddress(wallet.addr).publicKey,
+          "WORMHOLE"
       );
     
     console.log("GET EMITTER ADDRESS"); 
-    const emitterAddr = getEmitterAddressEth(ETH_BRIDGE_ADRESS);
+    const emitterAddr = getEmitterAddressEth(ETH_BRIDGE_ADDRESS);
     console.log("PARSE SEQUENCE");  
-    const sequence: string = parseSequenceFromLogEth(receipt, ETH_CORE_ADRESS);
+    const sequence: string = parseSequenceFromLogEth(receipt, ETH_CORE_ADDRESS);
    
     let interval = setInterval(async () => {
       await provider.send('evm_mine')
