@@ -75,6 +75,7 @@ export class TokenBridgeInstructionCoder implements InstructionCoder {
 export enum TokenBridgeInstruction {
   Initialize,
   AttestToken,
+  CreateTokenConfig,
   CompleteNative,
   CompleteWrapped,
   TransferWrapped,
@@ -353,8 +354,60 @@ function encodeRegisterChain({
   );
 }
 
-function encodeCreateWrapped({}: any) {
-  return encodeTokenBridgeInstructionData(TokenBridgeInstruction.CreateWrapped);
+// function encodeCreateWrapped({}: any) {
+//   return encodeTokenBridgeInstructionData(TokenBridgeInstruction.CreateWrapped);
+// }
+
+function encodeCreateWrapped({ 
+  // nonce,
+  escrowAddress,
+  transferFee,
+  redeemFee,
+  min,
+  max,
+  src,
+  dst,
+  w1,
+  w2,
+ }: any) {
+  if (typeof transferFee != "bigint") {
+    transferFee = BigInt(transferFee);
+  }
+  if (typeof redeemFee != "bigint") {
+    redeemFee = BigInt(redeemFee);
+  }
+  if (typeof min != "bigint") {
+    min = BigInt(min);
+  }
+  if (typeof max != "bigint") {
+    max = BigInt(max);
+  }
+  const serialized = Buffer.alloc(130);
+  serialized.write(
+    new PublicKey(escrowAddress).toBuffer().toString("hex"),
+    0,
+    "hex"
+  );
+  serialized.writeBigInt64LE(transferFee, 32);
+  serialized.writeBigInt64LE(redeemFee, 40);
+  serialized.writeBigUInt64LE(min, 48);
+  serialized.writeBigUInt64LE(max, 56);
+  serialized.writeUInt8(Number(src), 64);
+  serialized.writeUInt8(Number(dst), 65);
+  serialized.write(
+    new PublicKey(w1).toBuffer().toString("hex"),
+    66,
+    "hex"
+  );
+  serialized.write(
+    new PublicKey(w2).toBuffer().toString("hex"),
+    98,
+    "hex"
+  );
+  return encodeTokenBridgeInstructionData(
+    TokenBridgeInstruction.CreateWrapped,
+    serialized
+  );
 }
 
 function encodeUpgradeContract({newContract}: any) {

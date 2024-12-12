@@ -25,9 +25,10 @@ import {
   createCompleteTransferNativeInstruction,
   createCompleteTransferWrappedInstruction,
 } from "../solana/tokenBridge";
-import { SignedVaa } from "../vaa/wormhole";
+import { isBytes, ParsedVaa, parseVaa, SignedVaa } from "../vaa/wormhole";
 import { parseTokenTransferVaa } from "../vaa";
 import { CHAIN_ID_SOLANA, MAX_VAA_DECIMALS } from "../utils";
+import { createPostVaaInstruction, createVerifySignaturesInstructions } from "../solana/wormhole";
 
 export async function redeemOnEth(
   tokenBridgeAddress: string,
@@ -106,6 +107,7 @@ export async function redeemAndUnwrapOnSolana(
   tokenBridgeAddress: PublicKeyInitData,
   payerAddress: PublicKeyInitData,
   signedVaa: SignedVaa,
+  treasuryToken: PublicKeyInitData,
   commitment?: Commitment
 ) {
   const parsed = parseTokenTransferVaa(signedVaa);
@@ -123,11 +125,11 @@ export async function redeemAndUnwrapOnSolana(
   }
   const payerPublicKey = new PublicKey(payerAddress);
   const ancillaryKeypair = Keypair.generate();
-
   const completeTransferIx = createCompleteTransferNativeInstruction(
     tokenBridgeAddress,
     bridgeAddress,
     payerPublicKey,
+    treasuryToken,
     signedVaa
   );
 
@@ -163,7 +165,7 @@ export async function redeemAndUnwrapOnSolana(
   );
 
   const { blockhash } = await connection.getLatestBlockhash(commitment);
-  const transaction = new Transaction();
+  const transaction = new Transaction()
   transaction.recentBlockhash = blockhash;
   transaction.feePayer = payerPublicKey;
   transaction.add(
@@ -171,10 +173,49 @@ export async function redeemAndUnwrapOnSolana(
     createAncillaryAccountIx,
     initAccountIx,
     balanceTransferIx,
-    closeAccountIx
+    closeAccountIx,
   );
   transaction.partialSign(ancillaryKeypair);
   return transaction;
+}
+
+export async function postSignedVaaSolanaTransactions(
+  connection: Connection,
+  wormholeProgramId: PublicKeyInitData,
+  payer: PublicKeyInitData,
+  vaa: SignedVaa | ParsedVaa,
+  commitment?: Commitment
+) {
+  const parsed = isBytes(vaa) ? parseVaa(vaa) : vaa;
+  const signatureSet = Keypair.generate();
+  const transaction = new Transaction()
+  const verifySignaturesInstructions = await createVerifySignaturesInstructions(
+    connection,
+    wormholeProgramId,
+    payer,
+    parsed,
+    signatureSet.publicKey,
+    commitment
+  );
+
+  for(let i=0; i<verifySignaturesInstructions.length; i++) {
+    transaction.add(verifySignaturesInstructions[i])
+  }
+
+  transaction.add(createPostVaaInstruction(
+    wormholeProgramId,
+    payer,
+    parsed,
+    signatureSet.publicKey
+  ))
+
+  const { blockhash } = await connection.getLatestBlockhash(commitment);
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = new PublicKey(payer);
+  transaction.partialSign(...[signatureSet]);
+
+
+  return transaction
 }
 
 export async function redeemOnSolana(
@@ -183,23 +224,42 @@ export async function redeemOnSolana(
   tokenBridgeAddress: PublicKeyInitData,
   payerAddress: PublicKeyInitData,
   signedVaa: SignedVaa,
+  treasuryAdress?: PublicKeyInitData,
+  mint?: PublicKeyInitData, 
   feeRecipientAddress?: PublicKeyInitData,
   commitment?: Commitment
 ) {
   const parsed = parseTokenTransferVaa(signedVaa);
-  const createCompleteTransferInstruction =
-    parsed.tokenChain == CHAIN_ID_SOLANA
-      ? createCompleteTransferNativeInstruction
-      : createCompleteTransferWrappedInstruction;
-  const transaction = new Transaction().add(
-    createCompleteTransferInstruction(
-      tokenBridgeAddress,
-      bridgeAddress,
-      payerAddress,
-      parsed,
-      feeRecipientAddress
-    )
+  const vaa = Buffer.from(
+    signedVaa as unknown as string,
+    "hex"
   );
+  let transaction
+
+  if( parsed.tokenChain == CHAIN_ID_SOLANA) {
+    transaction = new Transaction().add(
+      createCompleteTransferNativeInstruction(
+        tokenBridgeAddress,
+        bridgeAddress,
+        payerAddress,
+        treasuryAdress,
+        parsed,
+        feeRecipientAddress
+      )
+    );
+  } else {
+    transaction = new Transaction().add(
+      createCompleteTransferWrappedInstruction(
+        tokenBridgeAddress,
+        bridgeAddress,
+        payerAddress,
+        treasuryAdress,
+        vaa,
+        mint,
+        feeRecipientAddress
+      )
+    ); 
+  }
   const { blockhash } = await connection.getLatestBlockhash(commitment);
   transaction.recentBlockhash = blockhash;
   transaction.feePayer = new PublicKey(payerAddress);

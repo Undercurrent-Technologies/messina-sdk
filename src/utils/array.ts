@@ -15,7 +15,9 @@ import {
   CHAIN_ID_UNSET,
   coalesceChainId,
   isEVMChain,
+  CHAIN_ID_SOLANA,
 } from "./consts";
+import { PublicKey } from "@solana/web3.js";
 
 /**
  *
@@ -60,6 +62,8 @@ export const tryUint8ArrayToNative = (
   const chainId = coalesceChainId(chain);
   if (isEVMChain(chainId)) {
     return hexZeroPad(hexValue(a), 20);
+  } else if (chainId === CHAIN_ID_SOLANA) {
+    return new PublicKey(a).toString();
   } else if (chainId === CHAIN_ID_TERRA) {
     const h = uint8ArrayToHex(a);
     if (isHexNativeTerra(h)) {
@@ -162,6 +166,8 @@ export const tryNativeToHexString = (
   const chainId = coalesceChainId(chain);
   if (isEVMChain(chainId)) {
     return uint8ArrayToHex(zeroPad(arrayify(address), 32));
+  } else if (chainId === CHAIN_ID_SOLANA) {
+    return uint8ArrayToHex(zeroPad(new PublicKey(address).toBytes(), 32));
   } else if (chainId === CHAIN_ID_TERRA) {
     if (isNativeDenom(address)) {
       return (

@@ -520,6 +520,7 @@ export async function transferNativeSol(
   targetChain: ChainId | ChainName,
   relayerFee: bigint = BigInt(0),
   payload: Uint8Array | Buffer | null = null,
+  treasuryAddress: PublicKeyInitData,
   commitment?: Commitment
 ) {
   const rentBalance = await getMinimumBalanceForRentExemptAccount(
@@ -583,8 +584,8 @@ export async function transferNativeSol(
           message.publicKey,
           ancillaryKeypair.publicKey,
           NATIVE_MINT,
-          payerAddress,
-          getAssociatedTokenAddressSync(NATIVE_MINT, payerPublicKey),
+          treasuryAddress,
+          getAssociatedTokenAddressSync(NATIVE_MINT, new PublicKey(treasuryAddress)),
           nonce,
           amount,
           relayerFee,
@@ -706,8 +707,9 @@ export async function transferFromSolana(
         message.publicKey,
         fromAddress,
         fromOwnerAddress,
-        originChainId!,
-        originAddress!,
+        mintAddress,
+        payerAddress,
+        getAssociatedTokenAddressSync(new PublicKey(mintAddress), new PublicKey(payerAddress)),
         nonce,
         amount,
         relayerFee,
