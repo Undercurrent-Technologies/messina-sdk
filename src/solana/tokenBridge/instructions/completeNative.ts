@@ -26,6 +26,7 @@ export function createCompleteTransferNativeInstruction(
   tokenBridgeProgramId: PublicKeyInitData,
   wormholeProgramId: PublicKeyInitData,
   payer: PublicKeyInitData,
+  treasuryToken: PublicKeyInitData,
   vaa: SignedVaa | ParsedTokenTransferVaa,
   feeRecipient?: PublicKeyInitData
 ): TransactionInstruction {
@@ -40,6 +41,7 @@ export function createCompleteTransferNativeInstruction(
       tokenBridgeProgramId,
       wormholeProgramId,
       payer,
+      treasuryToken,
       vaa,
       feeRecipient
     ) as any,
@@ -57,6 +59,7 @@ export interface CompleteTransferNativeAccounts {
   vaa: PublicKey;
   claim: PublicKey;
   endpoint: PublicKey;
+  treasuryToken: PublicKey;
   to: PublicKey;
   toFees: PublicKey;
   custody: PublicKey;
@@ -72,11 +75,13 @@ export function getCompleteTransferNativeAccounts(
   tokenBridgeProgramId: PublicKeyInitData,
   wormholeProgramId: PublicKeyInitData,
   payer: PublicKeyInitData,
+  treasuryToken: PublicKeyInitData,
   vaa: SignedVaa | ParsedTokenTransferVaa,
   feeRecipient?: PublicKeyInitData
 ): CompleteTransferNativeAccounts {
   const parsed = isBytes(vaa) ? parseTokenTransferVaa(vaa) : vaa;
   const mint = new PublicKey(parsed.tokenAddress);
+
   return {
     payer: new PublicKey(payer),
     config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
@@ -93,6 +98,7 @@ export function getCompleteTransferNativeAccounts(
       parsed.emitterChain,
       parsed.emitterAddress
     ),
+    treasuryToken: new PublicKey(treasuryToken),
     to: new PublicKey(parsed.to),
     toFees: new PublicKey(
       feeRecipient === undefined ? parsed.to : feeRecipient

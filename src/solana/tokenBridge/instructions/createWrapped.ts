@@ -18,6 +18,7 @@ import {
   deriveEndpointKey,
   deriveMintAuthorityKey,
   deriveTokenBridgeConfigKey,
+  deriveTokenConfigKey,
   deriveTokenMetadataKey,
   deriveWrappedMetaKey,
   deriveWrappedMintKey,
@@ -29,12 +30,23 @@ export function createCreateWrappedInstruction(
   wormholeProgramId: PublicKeyInitData,
   payer: PublicKeyInitData,
   mintPubkey: PublicKeyInitData,
-  vaa: SignedVaa | ParsedAttestMetaVaa
+  vaa: SignedVaa | ParsedAttestMetaVaa,
+  tokenConfigData: WrappedTokenConfigData
 ): TransactionInstruction {
   const methods =
     createReadOnlyTokenBridgeProgramInterface(
       tokenBridgeProgramId
-    ).methods.createWrapped();
+    ).methods.createWrapped(
+      tokenConfigData.escrowAddress,
+      tokenConfigData.transferFee,
+      tokenConfigData.redeemFee,
+      tokenConfigData.min,
+      tokenConfigData.max,
+      tokenConfigData.src,
+      tokenConfigData.dst,
+      tokenConfigData.w1,
+      tokenConfigData.w2,
+    );
 
   // @ts-ignore
   return methods._ixFn(...methods._args, {
@@ -52,9 +64,22 @@ export function createCreateWrappedInstruction(
   });
 }
 
+export interface WrappedTokenConfigData {
+  escrowAddress: PublicKey;
+  transferFee: bigint;
+  redeemFee: bigint;
+  min: bigint;
+  max: bigint;
+  src: boolean;
+  dst: boolean;
+  w1: PublicKey;
+  w2: PublicKey;
+}
+
 export interface CreateWrappedAccounts {
   payer: PublicKey;
   config: PublicKey;
+  tokenConfig: PublicKey;
   endpoint: PublicKey;
   vaa: PublicKey;
   claim: PublicKey;
@@ -78,72 +103,11 @@ export function getCreateWrappedAccounts(
 ): CreateWrappedAccounts {
   const parsed = isBytes(vaa) ? parseAttestMetaVaa(vaa) : vaa;
   const mint = new PublicKey(mintPubkey);
-  // const mint = deriveWrappedMintKey(
-  //   tokenBridgeProgramId,
-  //   parsed.tokenChain,
-  //   parsed.tokenAddress
-  // );
 
-  console.log(
-    "vaa: ",
-    derivePostedVaaKey(wormholeProgramId, parsed.hash).toBase58()
-  );
-  console.log(
-    "endpoint: ",
-    deriveEndpointKey(
-      tokenBridgeProgramId,
-      parsed.emitterChain,
-      parsed.emitterAddress
-    ).toBase58()
-  );
-
-  console.log("parsed.emitterChain: ", parsed.emitterChain);
-  console.log("parsed.emitterAddress: ", parsed.emitterAddress.toString("hex"));
-  console.log("wrapped mint: ", mint.toBase58());
-  console.log(
-    "wrapped meta: ",
-    deriveWrappedMetaKey(tokenBridgeProgramId, mint).toBase58()
-  );
-  console.log(
-    "claim: ",
-    deriveClaimKey(
-      tokenBridgeProgramId,
-      parsed.emitterAddress,
-      parsed.emitterChain,
-      parsed.sequence
-    ).toBase58()
-  );
-
-  console.log("spl metadata: ", deriveTokenMetadataKey(mint).toBase58());
-
-  console.log({
-    payer: new PublicKey(payer),
-    config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
-    endpoint: deriveEndpointKey(
-      tokenBridgeProgramId,
-      parsed.emitterChain,
-      parsed.emitterAddress
-    ),
-    vaa: derivePostedVaaKey(wormholeProgramId, parsed.hash),
-    claim: deriveClaimKey(
-      tokenBridgeProgramId,
-      parsed.emitterAddress,
-      parsed.emitterChain,
-      parsed.sequence
-    ),
-    mint,
-    wrappedMeta: deriveWrappedMetaKey(tokenBridgeProgramId, mint),
-    splMetadata: deriveTokenMetadataKey(mint),
-    mintAuthority: deriveMintAuthorityKey(tokenBridgeProgramId),
-    rent: SYSVAR_RENT_PUBKEY,
-    systemProgram: SystemProgram.programId,
-    tokenProgram: TOKEN_PROGRAM_ID,
-    splMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-    wormholeProgram: new PublicKey(wormholeProgramId),
-  })
   return {
     payer: new PublicKey(payer),
     config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
+    tokenConfig: deriveTokenConfigKey(tokenBridgeProgramId, mint),
     endpoint: deriveEndpointKey(
       tokenBridgeProgramId,
       parsed.emitterChain,
@@ -159,11 +123,12 @@ export function getCreateWrappedAccounts(
     mint,
     wrappedMeta: deriveWrappedMetaKey(tokenBridgeProgramId, mint),
     splMetadata: deriveTokenMetadataKey(mint),
+
     mintAuthority: deriveMintAuthorityKey(tokenBridgeProgramId),
     rent: SYSVAR_RENT_PUBKEY,
     systemProgram: SystemProgram.programId,
-    tokenProgram: TOKEN_PROGRAM_ID,
-    splMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
     wormholeProgram: new PublicKey(wormholeProgramId),
-  };
+    splMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+    tokenProgram: TOKEN_PROGRAM_ID,
+  }
 }

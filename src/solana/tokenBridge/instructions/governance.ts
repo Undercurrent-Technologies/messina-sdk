@@ -114,6 +114,7 @@ export function createUpgradeContractInstruction(
 
 export interface UpgradeContractAccounts {
   payer: PublicKey;
+  config: PublicKey;
   upgradeAuthority: PublicKey;
   spill: PublicKey;
   implementation: PublicKey;
@@ -133,6 +134,7 @@ export function getUpgradeContractAccounts(
 ): UpgradeContractAccounts {
   return {
     payer: new PublicKey(payer),
+    config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
     upgradeAuthority: deriveUpgradeAuthorityKey(tokenBridgeProgramId),
     spill: new PublicKey(spill === undefined ? payer : spill),
     implementation: new PublicKey(newContract),

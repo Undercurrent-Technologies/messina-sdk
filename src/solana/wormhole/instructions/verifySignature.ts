@@ -62,12 +62,6 @@ export async function createVerifySignaturesInstructions(
     commitment
   );
 
-  console.log("guardianSetData: ", guardianSetData);
-  console.log(
-    "guardianSetData.keys[0]: ",
-    guardianSetData.keys[0].toString("hex")
-  );
-
   const guardianSignatures = parsed.guardianSignatures;
   const guardianKeys = guardianSetData.keys;
 

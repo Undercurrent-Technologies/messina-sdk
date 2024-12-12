@@ -104,6 +104,7 @@ export function getAttestTokenAccounts(
     tokenBridgeProgramId,
     message
   );
+
   return {
     payer: new PublicKey(payer),
     config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),

@@ -201,6 +201,11 @@
           "isSigner": false
         },
         {
+          "name": "treasuryToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "to",
           "isMut": true,
           "isSigner": false
@@ -227,7 +232,7 @@
         },
         {
           "name": "rent",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -262,6 +267,11 @@
           "isSigner": false
         },
         {
+          "name": "tokenConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "vaa",
           "isMut": false,
           "isSigner": false
@@ -277,12 +287,22 @@
           "isSigner": false
         },
         {
+          "name": "treasuryToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "to",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "toFees",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "custody",
           "isMut": true,
           "isSigner": false
         },
@@ -298,6 +318,11 @@
         },
         {
           "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "custodySigner",
           "isMut": false,
           "isSigner": false
         },
@@ -338,6 +363,11 @@
           "isSigner": false
         },
         {
+          "name": "tokenConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "from",
           "isMut": true,
           "isSigner": false
@@ -358,7 +388,27 @@
           "isSigner": false
         },
         {
+          "name": "custody",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "authoritySigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "custodySigner",
           "isMut": false,
           "isSigner": false
         },
@@ -632,6 +682,11 @@
           "isSigner": false
         },
         {
+          "name": "tokenConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "endpoint",
           "isMut": false,
           "isSigner": false
@@ -677,6 +732,11 @@
           "isSigner": false
         },
         {
+          "name": "wormholeProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -685,14 +745,46 @@
           "name": "splMetadataProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "wormholeProgram",
-          "isMut": false,
-          "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "escrowAddress",
+          "type": "publicKey"
+        },
+        {
+          "name": "transferFee",
+          "type": "u64"
+        },
+        {
+          "name": "redeemFee",
+          "type": "u64"
+        },
+        {
+          "name": "min",
+          "type": "u64"
+        },
+        {
+          "name": "max",
+          "type": "u64"
+        },
+        {
+          "name": "src",
+          "type": "bool"
+        },
+        {
+          "name": "dst",
+          "type": "bool"
+        },
+        {
+          "name": "w1",
+          "type": "publicKey"
+        },
+        {
+          "name": "w2",
+          "type": "publicKey"
+        }
+      ]
     },
     {
       "name": "upgradeContract",
@@ -701,6 +793,11 @@
           "name": "payer",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "upgradeAuthority",
@@ -1163,7 +1260,7 @@
         },
         {
           "name": "mint",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {

@@ -8,7 +8,10 @@ import { createReadOnlyTokenBridgeProgramInterface } from "../program";
 import { getPostMessageCpiAccounts } from "../../wormhole";
 import {
   deriveAuthoritySignerKey,
+  deriveCustodyKey,
+  deriveCustodySignerKey,
   deriveTokenBridgeConfigKey,
+  deriveTokenConfigKey,
   deriveWrappedMetaKey,
   deriveWrappedMintKey,
 } from "../accounts";
@@ -20,8 +23,9 @@ export function createTransferWrappedInstruction(
   message: PublicKeyInitData,
   from: PublicKeyInitData,
   fromOwner: PublicKeyInitData,
-  tokenChain: number,
-  tokenAddress: Buffer | Uint8Array,
+  mint: PublicKeyInitData,
+  treasury: PublicKeyInitData,
+  treasuryToken: PublicKeyInitData,
   nonce: number,
   amount: bigint,
   fee: bigint,
@@ -47,8 +51,9 @@ export function createTransferWrappedInstruction(
       message,
       from,
       fromOwner,
-      tokenChain,
-      tokenAddress
+      mint,
+      treasury,
+      treasuryToken,
     ) as any,
     signers: undefined,
     remainingAccounts: undefined,
@@ -60,11 +65,16 @@ export function createTransferWrappedInstruction(
 export interface TransferWrappedAccounts {
   payer: PublicKey;
   config: PublicKey;
+  tokenConfig: PublicKey;
   from: PublicKey;
   fromOwner: PublicKey;
   mint: PublicKey;
+  custody: PublicKey;
+  treasury: PublicKey;
+  treasuryToken: PublicKey;
   wrappedMeta: PublicKey;
   authoritySigner: PublicKey;
+  custodySigner: PublicKey;
   wormholeBridge: PublicKey;
   wormholeMessage: PublicKey;
   wormholeEmitter: PublicKey;
@@ -84,14 +94,10 @@ export function getTransferWrappedAccounts(
   message: PublicKeyInitData,
   from: PublicKeyInitData,
   fromOwner: PublicKeyInitData,
-  tokenChain: number,
-  tokenAddress: Buffer | Uint8Array
+  mint: PublicKeyInitData,
+  treasury: PublicKeyInitData,
+  treasuryToken: PublicKeyInitData,
 ): TransferWrappedAccounts {
-  const mint = deriveWrappedMintKey(
-    tokenBridgeProgramId,
-    tokenChain,
-    tokenAddress
-  );
   const {
     wormholeBridge,
     wormholeMessage,
@@ -107,14 +113,20 @@ export function getTransferWrappedAccounts(
     payer,
     message
   );
+
   return {
     payer: new PublicKey(payer),
     config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
+    tokenConfig: deriveTokenConfigKey(tokenBridgeProgramId, mint),
     from: new PublicKey(from),
     fromOwner: new PublicKey(fromOwner),
-    mint: mint,
+    mint: new PublicKey(mint),
+    custody: deriveCustodyKey(tokenBridgeProgramId, mint),
+    treasury: new PublicKey(treasury),
+    treasuryToken: new PublicKey(treasuryToken),
     wrappedMeta: deriveWrappedMetaKey(tokenBridgeProgramId, mint),
     authoritySigner: deriveAuthoritySignerKey(tokenBridgeProgramId),
+    custodySigner: deriveCustodySignerKey(tokenBridgeProgramId),
     wormholeBridge,
     wormholeMessage: wormholeMessage,
     wormholeEmitter,

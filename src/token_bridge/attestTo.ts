@@ -11,7 +11,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { SignedVaa } from "../vaa";
-import { createCreateWrappedInstruction } from "../solana/tokenBridge";
+import { createCreateWrappedInstruction, WrappedTokenConfigData } from "../solana/tokenBridge";
 
 export async function attestToEth(
   tokenBridgeAddress: string,
@@ -75,6 +75,7 @@ export async function attestToSolana(
   payerAddress: PublicKeyInitData,
   mintPubkey: PublicKeyInitData,
   signedVaa: SignedVaa,
+  tokenConfigData: WrappedTokenConfigData,
   commitment?: Commitment
 ): Promise<Transaction> {
   const transaction = new Transaction().add(
@@ -83,7 +84,8 @@ export async function attestToSolana(
       bridgeAddress,
       payerAddress,
       mintPubkey,
-      signedVaa
+      signedVaa,
+      tokenConfigData,
     )
   );
   const { blockhash } = await connection.getLatestBlockhash(commitment);
