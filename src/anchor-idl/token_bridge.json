@@ -1361,6 +1361,197 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "updateWrapped",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "endpoint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vaa",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "claim",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "wrappedMeta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "splMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "wormholeProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "splMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "escrowAddress",
+          "type": "publicKey"
+        },
+        {
+          "name": "transferFee",
+          "type": "u64"
+        },
+        {
+          "name": "redeemFee",
+          "type": "u64"
+        },
+        {
+          "name": "min",
+          "type": "u64"
+        },
+        {
+          "name": "max",
+          "type": "u64"
+        },
+        {
+          "name": "src",
+          "type": "bool"
+        },
+        {
+          "name": "dst",
+          "type": "bool"
+        },
+        {
+          "name": "w1",
+          "type": "publicKey"
+        },
+        {
+          "name": "w2",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateTokenConfig",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "escrowAddress",
+          "type": "publicKey"
+        },
+        {
+          "name": "transferFee",
+          "type": "u64"
+        },
+        {
+          "name": "redeemFee",
+          "type": "u64"
+        },
+        {
+          "name": "min",
+          "type": "u64"
+        },
+        {
+          "name": "max",
+          "type": "u64"
+        },
+        {
+          "name": "src",
+          "type": "bool"
+        },
+        {
+          "name": "dst",
+          "type": "bool"
+        },
+        {
+          "name": "w1",
+          "type": "publicKey"
+        },
+        {
+          "name": "w2",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [],
