@@ -7,6 +7,7 @@ import {
 } from "@solana/web3.js";
 import { createReadOnlyTokenBridgeProgramInterface } from "../program";
 import { deriveTokenBridgeConfigKey, deriveTokenConfigKey } from "../accounts";
+import { WrappedTokenConfigData } from "./createWrapped";
 
 export function createUpdateTreasuryAddressInstruction(
   tokenBridgeProgramId: PublicKeyInitData,
@@ -159,6 +160,58 @@ export function getSetPauseStatusAccounts(
   return {
     payer: new PublicKey(payer),
     config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
+    rent: SYSVAR_RENT_PUBKEY,
+    systemProgram: SystemProgram.programId,
+  };
+}
+
+
+export function createUpdateTokenConfigInstruction(
+  tokenBridgeProgramId: PublicKeyInitData,
+  payer: PublicKeyInitData,
+  mint: PublicKeyInitData,
+  tokenConfigData: WrappedTokenConfigData
+): TransactionInstruction {
+  const methods = createReadOnlyTokenBridgeProgramInterface(tokenBridgeProgramId).methods.updateTokenConfig(
+    tokenConfigData.escrowAddress,
+    tokenConfigData.transferFee,
+    tokenConfigData.redeemFee,
+    tokenConfigData.min,
+    tokenConfigData.max,
+    tokenConfigData.src,
+    tokenConfigData.dst,
+    tokenConfigData.w1,
+    tokenConfigData.w2,
+  );
+
+  // @ts-ignore
+  return methods._ixFn(...methods._args, {
+    accounts: getUpdateTokenConfigAccounts(tokenBridgeProgramId, mint, payer) as any,
+    signers: undefined,
+    remainingAccounts: undefined,
+    preInstructions: undefined,
+    postInstructions: undefined,
+  });
+}
+export interface UpdateTokenConfigAccounts {
+  payer: PublicKey;
+  mint: PublicKey;
+  config: PublicKey;
+  tokenConfig: PublicKey;
+  rent: PublicKey;
+  systemProgram: PublicKey;
+}
+
+export function getUpdateTokenConfigAccounts(
+  tokenBridgeProgramId: PublicKeyInitData,
+  mint: PublicKeyInitData,
+  payer: PublicKeyInitData
+): UpdateTokenConfigAccounts {
+  return {
+    payer: new PublicKey(payer),
+    mint: new PublicKey(mint),
+    config: deriveTokenBridgeConfigKey(tokenBridgeProgramId),
+    tokenConfig: deriveTokenConfigKey(tokenBridgeProgramId, mint),
     rent: SYSVAR_RENT_PUBKEY,
     systemProgram: SystemProgram.programId,
   };
