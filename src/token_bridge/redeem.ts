@@ -29,6 +29,7 @@ import { isBytes, ParsedVaa, parseVaa, SignedVaa } from "../vaa/wormhole";
 import { parseTokenTransferVaa } from "../vaa";
 import { CHAIN_ID_SOLANA, MAX_VAA_DECIMALS } from "../utils";
 import { createPostVaaInstruction, createVerifySignaturesInstructions } from "../solana/wormhole";
+import { buildInstructionsCreateTokenAccount } from "../solana/tokenBridge/instructions/account";
 
 export async function redeemOnEth(
   tokenBridgeAddress: string,
@@ -166,6 +167,15 @@ export async function redeemAndUnwrapOnSolana(
 
   const { blockhash } = await connection.getLatestBlockhash(commitment);
   const transaction = new Transaction()
+
+  await buildInstructionsCreateTokenAccount(
+    connection,
+    new PublicKey(payerAddress),
+    new PublicKey(payerAddress),
+    targetPublicKey,
+    NATIVE_MINT,
+    transaction
+  )
   transaction.recentBlockhash = blockhash;
   transaction.feePayer = payerPublicKey;
   transaction.add(
@@ -234,10 +244,19 @@ export async function redeemOnSolana(
     signedVaa as unknown as string,
     "hex"
   );
-  let transaction
+  let transaction = new Transaction()
 
-  if( parsed.tokenChain == CHAIN_ID_SOLANA) {
-    transaction = new Transaction().add(
+  await buildInstructionsCreateTokenAccount(
+    connection,
+    new PublicKey(payerAddress),
+    new PublicKey(payerAddress),
+    new PublicKey(parsed.to),
+    new PublicKey(mint),
+    transaction
+  )
+
+  if(parsed.tokenChain == CHAIN_ID_SOLANA) {
+    transaction = transaction.add(
       createCompleteTransferNativeInstruction(
         tokenBridgeAddress,
         bridgeAddress,
@@ -248,7 +267,7 @@ export async function redeemOnSolana(
       )
     );
   } else {
-    transaction = new Transaction().add(
+    transaction = transaction.add(
       createCompleteTransferWrappedInstruction(
         tokenBridgeAddress,
         bridgeAddress,
