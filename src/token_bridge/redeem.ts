@@ -198,7 +198,9 @@ export async function postSignedVaaSolanaTransactions(
 ) {
   const parsed = isBytes(vaa) ? parseVaa(vaa) : vaa;
   const signatureSet = Keypair.generate();
-  const transaction = new Transaction()
+
+  const unsignedTransactions: Transaction[] = [];
+
   const verifySignaturesInstructions = await createVerifySignaturesInstructions(
     connection,
     wormholeProgramId,
@@ -208,24 +210,34 @@ export async function postSignedVaaSolanaTransactions(
     commitment
   );
 
-  for(let i=0; i<verifySignaturesInstructions.length; i++) {
-    transaction.add(verifySignaturesInstructions[i])
+  for(let i=0; i<verifySignaturesInstructions.length; i += 2) {
+    unsignedTransactions.push(
+      new Transaction().add(...verifySignaturesInstructions.slice(i, i + 2))
+    );
   }
 
-  transaction.add(createPostVaaInstruction(
-    wormholeProgramId,
-    payer,
-    parsed,
-    signatureSet.publicKey
-  ))
+  unsignedTransactions.push(
+    new Transaction().add(
+      createPostVaaInstruction(
+        wormholeProgramId,
+        payer,
+        parsed,
+        signatureSet.publicKey
+      )
+    )
+  );
 
-  const { blockhash } = await connection.getLatestBlockhash(commitment);
-  transaction.recentBlockhash = blockhash;
-  transaction.feePayer = new PublicKey(payer);
-  transaction.partialSign(...[signatureSet]);
+  for(let i=0; i<unsignedTransactions.length; i++) {
+    const { blockhash } = await connection.getLatestBlockhash(commitment);
 
+    unsignedTransactions[i].recentBlockhash = blockhash;
+    unsignedTransactions[i].feePayer = new PublicKey(payer);
+    if(i !== unsignedTransactions.length - 1) {
+      unsignedTransactions[i].partialSign(...[signatureSet]);
+    }
+  }
 
-  return transaction
+  return unsignedTransactions
 }
 
 export async function redeemOnSolana(
