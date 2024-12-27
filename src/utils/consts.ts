@@ -47,6 +47,8 @@ export const CHAINS = {
   cronos: 20025,
   coredao: 20026,
   manta: 20027,
+  bahamut: 20028,
+  plume: 20029,
 } as const;
 
 export type ChainName = keyof typeof CHAINS;
@@ -85,6 +87,8 @@ export const EVMChainNames = [
   "cronos",
   "coredao",
   "manta",
+  "bahamut",
+  "plume",
 ] as const;
 export type EVMChainName = typeof EVMChainNames[number];
 
@@ -353,6 +357,16 @@ const MAINNET = {
     token_bridge: undefined,
     nft_bridge: undefined,
   },
+  bahamut: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  plume: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
 };
 
 const TESTNET = {
@@ -599,6 +613,16 @@ const TESTNET = {
     nft_bridge: undefined,
   },
   manta: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  bahamut: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  plume: {
     core: undefined,
     token_bridge: undefined,
     nft_bridge: undefined,
@@ -852,6 +876,16 @@ const DEVNET = {
     token_bridge: undefined,
     nft_bridge: undefined,
   },
+  bahamut: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
+  plume: {
+    core: undefined,
+    token_bridge: undefined,
+    nft_bridge: undefined,
+  },
 };
 
 /**
@@ -941,6 +975,8 @@ export const CHAIN_ID_HOLESKY = CHAINS["holesky"];
 export const CHAIN_ID_CRONOS = CHAINS["cronos"];
 export const CHAIN_ID_COREDAO = CHAINS["coredao"];
 export const CHAIN_ID_MANTA = CHAINS["manta"];
+export const CHAIN_ID_BAHAMUT = CHAINS["bahamut"];
+export const CHAIN_ID_PLUME = CHAINS["plume"];
 
 // This inverts the [[CHAINS]] object so that we can look up a chain by id
 export type ChainIdToName = {

@@ -65,6 +65,10 @@ export var ChainID;
     ChainID[ChainID["CHAIN_ID_OPTIMISM_SEPOLIA"] = 10005] = "CHAIN_ID_OPTIMISM_SEPOLIA";
     ChainID[ChainID["CHAIN_ID_HOLESKY"] = 10006] = "CHAIN_ID_HOLESKY";
     ChainID[ChainID["CHAIN_ID_CRONOS"] = 20025] = "CHAIN_ID_CRONOS";
+    ChainID[ChainID["CHAIN_ID_COREDAO"] = 20026] = "CHAIN_ID_COREDAO";
+    ChainID[ChainID["CHAIN_ID_MANTA"] = 20027] = "CHAIN_ID_MANTA";
+    ChainID[ChainID["CHAIN_ID_BAHAMUT"] = 20028] = "CHAIN_ID_BAHAMUT";
+    ChainID[ChainID["CHAIN_ID_PLUME"] = 20029] = "CHAIN_ID_PLUME";
     ChainID[ChainID["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(ChainID || (ChainID = {}));
 export function chainIDFromJSON(object) {
@@ -176,6 +180,18 @@ export function chainIDFromJSON(object) {
         case 20025:
         case "CHAIN_ID_CRONOS":
             return ChainID.CHAIN_ID_CRONOS;
+        case 20026:
+        case "CHAIN_ID_COREDAO":
+            return ChainID.CHAIN_ID_COREDAO;
+        case 20027:
+        case "CHAIN_ID_MANTA":
+            return ChainID.CHAIN_ID_MANTA;
+        case 20028:
+        case "CHAIN_ID_BAHAMUT":
+            return ChainID.CHAIN_ID_BAHAMUT;
+        case 20029:
+        case "CHAIN_ID_PLUME":
+            return ChainID.CHAIN_ID_PLUME;
         case -1:
         case "UNRECOGNIZED":
         default:
@@ -258,6 +274,14 @@ export function chainIDToJSON(object) {
             return "CHAIN_ID_HOLESKY";
         case ChainID.CHAIN_ID_CRONOS:
             return "CHAIN_ID_CRONOS";    
+        case ChainID.CHAIN_ID_COREDAO:
+            return "CHAIN_ID_COREDAO";
+        case ChainID.CHAIN_ID_MANTA:
+            return "CHAIN_ID_MANTA";
+        case ChainID.CHAIN_ID_BAHAMUT:
+            return "CHAIN_ID_BAHAMUT";
+        case ChainID.CHAIN_ID_PLUME:
+            return "CHAIN_ID_PLUME";
         default:
             return "UNKNOWN";
     }

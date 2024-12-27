@@ -40,6 +40,10 @@ export declare enum ChainID {
     CHAIN_ID_OPTIMISM_SEPOLIA = 10005,
     CHAIN_ID_HOLESKY = 10006,
     CHAIN_ID_CRONOS = 20025,
+    CHAIN_ID_COREDAO = 20026,
+    CHAIN_ID_MANTA = 20027,
+    CHAIN_ID_BAHAMUT = 20028,
+    CHAIN_ID_PLUME = 20029,
     UNRECOGNIZED = -1
 }
 export declare function chainIDFromJSON(object: any): ChainID;
