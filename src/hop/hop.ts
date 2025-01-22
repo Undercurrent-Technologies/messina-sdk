@@ -21,3 +21,12 @@ export async function hopOnEVM(
   const receipt = await v.wait();
   return receipt;
 }
+
+export async function getHopSequenceEVM(
+  hopAddress: string,
+  signer: ethers.Signer,
+  vaaHash: Uint8Array,
+) {
+  const hop = RouterImplementation__factory.connect(hopAddress, signer);
+  return await hop.getHopSequence(vaaHash);
+}
