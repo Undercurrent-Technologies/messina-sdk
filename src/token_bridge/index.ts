@@ -7,3 +7,5 @@ export * from "./getOriginalAsset";
 export * from "./redeem";
 export * from "./transfer";
 export * from "./updateAttestTo";
+export * from "./getIsWrappedAsset";
+export * from "./createWrapped";
