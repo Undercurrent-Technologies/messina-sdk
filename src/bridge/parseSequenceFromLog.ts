@@ -3,6 +3,7 @@ import algosdk from "algosdk";
 import { BigNumber, ContractReceipt } from "ethers";
 import { Implementation__factory } from "../ethers-contracts";
 import { TransactionResponse, VersionedTransactionResponse } from "@solana/web3.js";
+import { Types } from "aptos";
 
 export function parseSequenceFromLogEth(
   receipt: ContractReceipt,
@@ -106,4 +107,24 @@ export function parseSequenceFromLogSolana(
     throw new Error("sequence not found");
   }
   return sequence.toString();
+}
+
+/**
+ * Given a transaction result, return the first WormholeMessage event sequence
+ * @param coreBridgeAddress Wormhole Core bridge address
+ * @param result the result of client.waitForTransactionWithResult(txHash)
+ * @returns sequence
+ */
+export function parseSequenceFromLogAptos(
+  coreBridgeAddress: string,
+  result: Types.UserTransaction
+): string | null {
+  if (result.success) {
+    const event = result.events.find(
+      (e) => e.type === `${coreBridgeAddress}::state::WormholeMessage`
+    );
+    return event?.data.sequence || null;
+  }
+
+  return null;
 }

@@ -59,6 +59,8 @@ import {
   createTransferWrappedWithPayloadInstruction,
   
 } from "../solana/tokenBridge";
+import { Types } from "aptos";
+import { transferTokensWithPayload, transferTokens as transferTokensAptos } from "../aptos";
 
 export async function getAllowanceEth(
   tokenBridgeAddress: string,
@@ -726,4 +728,48 @@ export async function transferFromSolana(
   transaction.feePayer = new PublicKey(payerAddress);
   transaction.partialSign(message);
   return transaction;
+}
+
+/**
+ * Transfer an asset on Aptos to another chain.
+ * @param tokenBridgeAddress Address of token bridge
+ * @param fullyQualifiedType Full qualified type of asset to transfer
+ * @param amount Amount to send to recipient
+ * @param recipientChain Target chain
+ * @param recipient Recipient's address on target chain
+ * @param relayerFee Fee to pay relayer
+ * @param payload Payload3 data, leave null for basic token transfers
+ * @returns Transaction payload
+ */
+export function transferFromAptos(
+  tokenBridgeAddress: string,
+  fullyQualifiedType: string,
+  amount: string,
+  recipientChain: ChainId | ChainName,
+  recipient: Uint8Array,
+  relayerFee: string = "0",
+  payload: Uint8Array | null = null
+): Types.EntryFunctionPayload {
+  if (payload) {
+    // Currently unsupported
+    return transferTokensWithPayload(
+      tokenBridgeAddress,
+      fullyQualifiedType,
+      amount,
+      recipientChain,
+      recipient,
+      createNonce().readUInt32LE(0),
+      payload
+    );
+  }
+
+  return transferTokensAptos(
+    tokenBridgeAddress,
+    fullyQualifiedType,
+    amount,
+    recipientChain,
+    recipient,
+    relayerFee,
+    createNonce().readUInt32LE(0)
+  );
 }

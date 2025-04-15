@@ -8,11 +8,13 @@ import {
 } from "../algorand";
 import { safeBigIntToNumber } from "../utils/bigint";
 import { ethers } from "ethers";
-import { uint8ArrayToHex } from "../utils";
+import { ensureHexPrefix, keccak256, uint8ArrayToHex } from "../utils";
 import { Bridge__factory } from "../ethers-contracts";
 import { Commitment, Connection, PublicKeyInitData } from "@solana/web3.js";
 import { getClaim } from "../solana/wormhole";
 import { parseVaa, SignedVaa } from "../vaa/wormhole";
+import { AptosClient } from "aptos";
+import { TokenBridgeState } from "../aptos/types";
 
 export async function getIsTransferCompletedEth(
   tokenBridgeAddress: string,
@@ -135,4 +137,41 @@ export async function getIsTransferCompletedSolana(
     parsed.sequence,
     commitment
   ).catch((e) => false);
+}
+
+/**
+ * Determine whether or not the transfer in the given VAA has completed on Aptos.
+ * @param client Client used to transfer data to/from Aptos node
+ * @param tokenBridgeAddress Address of token bridge
+ * @param transferVAA Bytes of transfer VAA
+ * @returns True if transfer is completed
+ */
+export async function getIsTransferCompletedAptos(
+  client: AptosClient,
+  tokenBridgeAddress: string,
+  transferVAA: Uint8Array
+): Promise<boolean> {
+  // get handle
+  tokenBridgeAddress = ensureHexPrefix(tokenBridgeAddress);
+  const state = (
+    await client.getAccountResource(
+      tokenBridgeAddress,
+      `${tokenBridgeAddress}::state::State`
+    )
+  ).data as TokenBridgeState;
+  const handle = state.consumed_vaas.elems.handle;
+
+  // check if vaa hash is in consumed_vaas
+  const transferVAAHash = getSignedVAAHash(transferVAA);
+  try {
+    // when accessing Set<T>, key is type T and value is 0
+    await client.getTableItem(handle, {
+      key_type: "vector<u8>",
+      value_type: "u8",
+      key: transferVAAHash,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }

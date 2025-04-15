@@ -13,6 +13,9 @@ import {
   coalesceChainId,
   hexToUint8Array,
   CHAIN_ID_SOLANA,
+  isValidAptosType,
+  CHAIN_ID_APTOS,
+  assertChain,
 } from "../utils";
 import { safeBigIntToNumber } from "../utils/bigint";
 import {
@@ -26,6 +29,9 @@ import {
   PublicKeyInitData,
 } from "@solana/web3.js";
 import { getWrappedMeta } from "../solana/tokenBridge";
+import { AptosClient } from "aptos";
+import { OriginInfo } from "../aptos/types";
+import { sha3_256 } from "js-sha3";
 // TODO: remove `as ChainId` and return number in next minor version as we can't ensure it will match our type definition
 export interface WormholeWrappedInfo {
   isWrapped: boolean;
@@ -178,6 +184,60 @@ export async function getOriginalAssetSolana(
       isWrapped: false,
       chainId: CHAIN_ID_SOLANA,
       assetAddress: new Uint8Array(32),
+    };
+  }
+}
+
+/**
+ * Gets the origin chain ID and address of an asset on Aptos, given its fully qualified type.
+ * @param client Client used to transfer data to/from Aptos node
+ * @param tokenBridgePackageId Address of token bridge
+ * @param fullyQualifiedType Fully qualified type of asset
+ * @returns Original chain ID and address of asset
+ */
+export async function getOriginalAssetAptos(
+  client: AptosClient,
+  tokenBridgePackageId: string,
+  fullyQualifiedType: string
+): Promise<WormholeWrappedInfo> {
+  if (!isValidAptosType(fullyQualifiedType)) {
+    throw new Error("Invalid qualified type");
+  }
+
+  let originInfo: OriginInfo | undefined;
+  try {
+    originInfo = (
+      await client.getAccountResource(
+        fullyQualifiedType.split("::")[0],
+        `${tokenBridgePackageId}::state::OriginInfo`
+      )
+    ).data as OriginInfo;
+  } catch {
+    return {
+      isWrapped: false,
+      chainId: CHAIN_ID_APTOS,
+      assetAddress: hexToUint8Array(sha3_256(fullyQualifiedType)),
+    };
+  }
+
+  if (!!originInfo) {
+    // wrapped asset
+    const chainId = parseInt(originInfo.token_chain.number);
+    assertChain(chainId);
+    const assetAddress = hexToUint8Array(
+      originInfo.token_address.external_address.substring(2)
+    );
+    return {
+      isWrapped: true,
+      chainId,
+      assetAddress,
+    };
+  } else {
+    // native asset
+    return {
+      isWrapped: false,
+      chainId: CHAIN_ID_APTOS,
+      assetAddress: hexToUint8Array(sha3_256(fullyQualifiedType)),
     };
   }
 }

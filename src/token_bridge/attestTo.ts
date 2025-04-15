@@ -12,6 +12,8 @@ import {
 } from "@solana/web3.js";
 import { SignedVaa } from "../vaa";
 import { createCreateWrappedInstruction, WrappedTokenConfigData } from "../solana/tokenBridge";
+import { Types } from "aptos";
+import { attestTo as attestToTokenAptos } from "../aptos";
 
 export async function attestToEth(
   tokenBridgeAddress: string,
@@ -92,4 +94,29 @@ export async function attestToSolana(
   transaction.recentBlockhash = blockhash;
   transaction.feePayer = new PublicKey(payerAddress);
   return transaction;
+}
+
+
+export function attestToAptos(
+  tokenBridgeAddress: string,
+  coinType: string,
+  attestVaa: Uint8Array,
+  transferFee: string,
+  redeemFee: string,
+  min: string,
+  max: string,
+  src: boolean,
+  dest: boolean,
+): Types.EntryFunctionPayload {
+  return attestToTokenAptos(
+    tokenBridgeAddress,
+    coinType,
+    attestVaa,
+    transferFee,
+    redeemFee,
+    min,
+    max,
+    src,
+    dest,
+)
 }
