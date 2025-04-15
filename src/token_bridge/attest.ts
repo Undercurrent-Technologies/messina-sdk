@@ -11,7 +11,7 @@ import algosdk, {
 import { ethers, PayableOverrides } from "ethers";
 import { getMessageFee, optin, TransactionSignerPair } from "../algorand";
 import { BridgeImplementationV2__factory } from "../ethers-contracts";
-import { textToHexString, textToUint8Array, uint8ArrayToHex } from "../utils";
+import { ChainId, textToHexString, textToUint8Array, uint8ArrayToHex } from "../utils";
 import { bigIntZero, safeBigIntToNumber } from "../utils/bigint";
 import { createNonce } from "../utils/createNonce";
 import {
@@ -24,6 +24,8 @@ import {
 } from "@solana/web3.js";
 import { createBridgeFeeTransferInstruction } from "../solana";
 import { createAttestTokenInstruction, TokenConfigData } from "../solana/tokenBridge";
+import { Types } from "aptos";
+import { attestToken as attestTokenAptos } from "../aptos";
 
 export async function attestFromEth(
   tokenBridgeAddress: string,
@@ -379,4 +381,35 @@ export async function attestFromSolana(
   transaction.feePayer = new PublicKey(payerAddress);
   transaction.partialSign(messageKey);
   return transaction;
+}
+
+/**
+ * Attest given token from Aptos.
+ * @param tokenBridgeAddress Address of token bridge
+ * @param tokenChain Origin chain ID
+ * @param tokenAddress Address of token on origin chain
+ * @returns Transaction payload
+ */
+export function attestFromAptos(
+  tokenBridgeAddress: string,
+  tokenChain: ChainId,
+  tokenAddress: string,
+  transferFee: string,
+  redeemFee: string,
+  min: string,
+  max: string,
+  src: boolean,
+  dest: boolean,
+): Types.EntryFunctionPayload {
+  return attestTokenAptos(
+    tokenBridgeAddress,
+    tokenChain,
+    tokenAddress,
+    transferFee,
+    redeemFee,
+    min,
+    max,
+    src,
+    dest,
+  );
 }

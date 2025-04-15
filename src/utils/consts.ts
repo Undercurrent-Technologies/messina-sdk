@@ -1148,3 +1148,6 @@ function evm_chain_subset(e: EVMChainName): ChainName {
   // will fail to compile if 'e' can't be typed as a [[ChainName]]
   return e;
 }
+
+export const APTOS_TOKEN_BRIDGE_EMITTER_ADDRESS =
+  "0000000000000000000000000000000000000000000000000000000000000001";

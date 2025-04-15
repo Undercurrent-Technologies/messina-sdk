@@ -30,6 +30,8 @@ import { parseTokenTransferVaa } from "../vaa";
 import { CHAIN_ID_SOLANA, MAX_VAA_DECIMALS } from "../utils";
 import { createPostVaaInstruction, createVerifySignaturesInstructions } from "../solana/wormhole";
 import { buildInstructionsCreateTokenAccount } from "../solana/tokenBridge/instructions/account";
+import { AptosClient, Types } from "aptos";
+import { completeTransferAndRegister } from "../aptos";
 
 export async function redeemOnEth(
   tokenBridgeAddress: string,
@@ -295,4 +297,21 @@ export async function redeemOnSolana(
   transaction.recentBlockhash = blockhash;
   transaction.feePayer = new PublicKey(payerAddress);
   return transaction;
+}
+
+/**
+ * Register the token specified in the given VAA in the transfer recipient's account if necessary
+ * and complete the transfer.
+ * @param client Client used to transfer data to/from Aptos node
+ * @param tokenBridgeAddress Address of token bridge
+ * @param transferVAA Bytes of transfer VAA
+ * @returns Transaction payload
+ */
+export function redeemOnAptos(
+  client: AptosClient,
+  tokenBridgeAddress: string,
+  transferVAA: Uint8Array,
+  tokenType:string,
+): Promise<Types.EntryFunctionPayload> {
+  return completeTransferAndRegister(client, tokenBridgeAddress, transferVAA, tokenType);
 }
