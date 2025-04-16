@@ -327,7 +327,7 @@ export const updateAdminTokenBridge = (
 ): Types.EntryFunctionPayload => {
   if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
   return {
-    function: `${tokenBridgeAddress}::token_bridge::update_admin_token_bridge`,
+    function: `${tokenBridgeAddress}::state::update_admin_token_bridge`,
     type_arguments: [],
     arguments: [adminAddress],
   };
