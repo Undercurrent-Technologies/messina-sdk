@@ -470,3 +470,94 @@ export const setTokenConfig = (
     arguments: [transferFee, redeemFee, min, max, src, dest],
   };
 };
+
+export const vaaIsConsumed = (
+  tokenBridgeAddress: string,
+  vaa: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::vaa_is_consumed`,
+    type_arguments: [],
+    arguments: [vaa],
+  };
+};
+
+export const originInfo = (
+  tokenBridgeAddress: string,
+  coinType: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::origin_info`,
+    type_arguments: [coinType],
+    arguments: [],
+  };
+};
+
+export const isWrappedAsset = (
+  tokenBridgeAddress: string,
+  coinType: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::is_wrapped_asset`,
+    type_arguments: [coinType],
+    arguments: [],
+  };
+};
+
+export const isRegisteredNativeAsset = (
+  tokenBridgeAddress: string,
+  coinType: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::is_registered_native_asset`,
+    type_arguments: [coinType],
+    arguments: [],
+  };
+};
+
+export const getWrappedAssetInfo = (
+  tokenBridgeAddress: string,
+  chainId: string,
+  tokenAddress: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+
+  return {
+    function: `${tokenBridgeAddress}::state::get_wrapped_asset_info`,
+    type_arguments: [],
+    arguments: [
+      chainId, 
+      tokenAddress
+    ],
+  };
+};
+
+
+export const getNativeAssetInfo = (
+  tokenBridgeAddress: string,
+  hash: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::get_native_asset_info`,
+    type_arguments: [],
+    arguments: [hash],
+  };
+};
+
+
+export const getRegisteredEmitterView = (
+  tokenBridgeAddress: string,
+  chainId: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::get_registered_emitter_view`,
+    type_arguments: [],
+    arguments: [chainId],
+  };
+};
