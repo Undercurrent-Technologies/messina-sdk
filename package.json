@@ -1,6 +1,6 @@
 {
   "name": "@algo-foundry/messina-sdk",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "description": "The official SDK for Messina Bridge.",
   "homepage": "https://messina.one",
   "main": "./lib/cjs/index.js",
@@ -71,6 +71,7 @@
     "@solana/web3.js": "^1.66.2",
     "@typechain/ethers-v5": "^10.0.0",
     "algosdk": "^2.4.0",
+    "aptos": "^1.21.0",
     "axios": "^1.4.0",
     "bech32": "^2.0.0",
     "binary-parser": "^2.2.1",
