@@ -21,6 +21,23 @@ export const createToken = (
   };
 };
 
+export const createFAToken = (
+    tokenBridgeAddress: string,
+    name: string,
+    symbol: string,
+    decimal: number,
+    icon_url: string,
+    website_url: string,
+    totalSupply: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::create_token::create_fa_asset`,
+    type_arguments: [],
+    arguments: [name, symbol, decimal, icon_url, website_url, totalSupply],
+  };
+};
+
 export type PublishTokenResult = {
   error: string
   publishPackageTxBytes: Uint8Array
