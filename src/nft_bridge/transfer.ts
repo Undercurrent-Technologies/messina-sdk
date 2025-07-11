@@ -1,11 +1,12 @@
 import { ethers, Overrides } from "ethers";
-import { CHAIN_ID_ALGORAND, ChainId, ChainName, createNonce } from "../utils";
+import { CHAIN_ID_ALGORAND, ChainId, ChainName, createNonce, coalesceChainId } from "../utils";
 import {
   NFT1155Implementation__factory,
   NFTBridge__factory,
   NFTImplementation__factory,
 } from "../ethers-contracts";
 import { getEmitterAddressEth } from "../bridge/getEmitterAddress";
+import { Types } from "aptos";
 
 export async function transferFromEth(
   nftBridge: ethers.Contract,
@@ -183,3 +184,23 @@ export const setInitArgs = async (
 
   return v
 }
+
+export function transferFromAptosNFT(
+  nftBridgeAddress: string,
+  token: string,
+  recipientChain: ChainId | ChainName,
+  recipient: Uint8Array
+): Types.EntryFunctionPayload {
+  const recipientChainId = coalesceChainId(recipientChain);
+  return {
+    function: `${nftBridgeAddress}::transfer_nft::transfer_nft_entry`,
+    type_arguments: [],
+    arguments: [
+      token,
+      recipientChainId,
+      recipient,
+      createNonce().readUInt32LE(0),
+    ],
+  };
+}
+
