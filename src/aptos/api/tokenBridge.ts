@@ -547,3 +547,39 @@ export const getRegisteredEmitterView = (
     arguments: [chainId],
   };
 };
+
+export const updateBridgeFee = (
+  tokenBridgeAddress: string,
+  bridgeFee: number
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::update_bridge_fee`,
+    type_arguments: [],
+    arguments: [bridgeFee],
+  };
+};
+
+export const getBridgeFee = (
+  tokenBridgeAddress: string,
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::escrow::get_bridge_fee`,
+    type_arguments: [],
+    arguments: [],
+  };
+};
+
+export const getWrappedAddress = (
+  tokenBridgeAddress: string,
+  chainId: ChainId,
+  address: string
+): Types.EntryFunctionPayload => {
+  if (!tokenBridgeAddress) throw new Error("Need token bridge address.");
+  return {
+    function: `${tokenBridgeAddress}::state::get_wrapped_locked_token_address_view`,
+    type_arguments: [],
+    arguments: [chainId, address],
+  };
+};
