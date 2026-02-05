@@ -1,7 +1,13 @@
-## Deprecation Notice
+<p align="center">
+  <a href="https://messina.gitbook.io/messina-sdk">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://messina.one/images/messina-logo-light.jpg">
+      <img src="https://messina.one/images/messina-logo-dark.jpg" height="128">
+    </picture>
+    <h1 align="center">Messina SDK</h1>
+  </a>
+</p>
 
-⚠️ **This package is deprecated and no longer maintained.**
+## Getting Started
 
-It has been **moved to**: `https://www.npmjs.com/package/@undercurrent-technologies/messina-sdk`
-
-Please migrate to `[messina-sdk](https://www.npmjs.com/package/@undercurrent-technologies/messina-sdk)`. This package may receive no further updates or security fixes.
+Visit <a aria-label="Messina SDK" href="https://messina.gitbook.io/messina-sdk">https://messina.gitbook.io/messina-sdk</a> to get started with Messina SDK.
